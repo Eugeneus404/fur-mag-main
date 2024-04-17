@@ -1,0 +1,32 @@
+﻿{% extends "app/layout.html" %}
+{% block content %}
+
+<div style="font-size: 32px; font-weight: 700; margin: 20px 0">Регистрация</div>
+<form method="POST">
+    {% csrf_token %}
+    <div style="margin-bottom: 10px;">
+        {{ regform.username.label_tag }}
+        {{ regform.username }}
+        {% if regform.username.errors %}
+        <p style="color: red;">{{ regform.username.errors }}</p>
+        {% endif %}
+    </div>
+    <div style="margin-bottom: 10px;">
+        {{ regform.password1.label_tag }}
+        {{ regform.password1 }}
+        {% if regform.password1.errors %}
+        <p style="color: red;">{{ regform.password1.errors }}</p>
+        {% endif %}
+    </div>
+    <div style="margin-bottom: 10px;">
+        {{ regform.password2.label_tag }}
+        {{ regform.password2 }}
+        {% if regform.password2.errors %}
+        <p style="color: red;">{{ regform.password2.errors }}</p>
+        {% endif %}
+    </div>
+    <div>
+        <button type="submit" style="padding: 10px; border: none; border-radius: 5px; background-color: #75b061; color: #fff; font-size: 16px; cursor: pointer;">Зарегистрироваться</button>
+    </div>
+</form>
+{% endblock %}

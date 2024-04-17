@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мебельный магнат | {{ title }}</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'app/content/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'app/content/site.css' %}" />
+    <link rel="icon" type="image/png" href="{% static 'app/content/logo.png' %}">
+    <script src="{% static 'app/scripts/modernizr-2.6.2.js' %}"></script>
+</head>
+
+<body>
+    <div class="main_layout_container">
+        <div class="main_layout_header_box">
+            <div class="inner_container">
+                <header class="header">
+                    <div class="image_main_logo">
+                        <a href="{% url 'home' %}">
+                            <img class="image image_main_logo" src="{% static 'app/content/logo.png' %}" alt="logo" />
+                        </a>
+                    </div>
+                    <nav class="nav">
+                        <ul>
+                            <li><a href="{% url 'home' %}">Каталог</a></li>
+                            <li><a href="{% url 'about' %}">Контакты</a></li>
+                            <li><a href="{% url 'contact' %}">Наши партнеры</a></li>
+                            <li><a href="{% url 'anketa' %}">Анкетирование</a></li>
+                        </ul>
+                    </nav>
+                    <div class="search">
+                        <input type="text" placeholder="Поиск..." />
+                        <button>Найти</button>
+                    </div>
+                    <div style="display: flex; flex-direction: column">
+                        <div style="margin-bottom: 10px;">
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'home' %}" style="text-decoration: none; color: #333;">Аккаунт: {{ user.username }}</a>
+                            {% else %}
+                            <a href="{% url 'login' %}" style="text-decoration: none; color: #333;">Вход</a>
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'logout' %}" style="text-decoration: none; color: #333;">Выход</a>
+                            {% else %}
+                            <a href="{% url 'registration' %}" style="text-decoration: none; color: #333;">Регистрация</a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </header>
+            </div>
+        </div>
+        <div class="main_layout_children_box">
+            <div className="main_page_container">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+        <div class="main_layout_footer_box">
+            <div class="inner_container">
+                <footer class="footer">
+                    <div class="footer__content">
+                        <div class="footer__links">
+                            <ul>
+                                <li><a href="{% url 'home' %}">Каталог</a></li>
+                                <li><a href="{% url 'about' %}">Контакты</a></li>
+                                <li><a href="{% url 'contact' %}">Наши партнеры</a></li>
+                                <li><a href="{% url 'anketa' %}">Анкетирование</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="footer__copyright">
+                        &copy; 2024 МЕБЕЛЬНЫЙ МАГНАТ
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="{% static 'app/scripts/jquery-1.10.2.js' %}"></script>
+    <script src="{% static 'app/scripts/bootstrap.js' %}"></script>
+    <script src="{% static 'app/scripts/respond.js' %}"></script>
+    {% block scripts %}{% endblock %}
+
+</body>
+</html>

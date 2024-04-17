@@ -1,0 +1,17 @@
+﻿{% extends "app/layout.html" %}
+{% load static %}
+{% block content %}
+
+<div class="main_page_grid_container">
+    <div style="grid-area: 1/1/4/2">
+
+    </div>
+    <div class="header_poster" style="border-radius: 20px; padding: 45px 60px; margin-top: 20px; position: relative">
+        <span class="header_poster_text" style="color: #FFF; position: absolute; top: 55px; left: 65px;">
+            Освежите свой дом новой энергией и стилем с нашей эксклюзивной коллекцией мебели!
+        </span>
+        <img src="{% static 'app/content/poster.jpg' %}" alt="Постер" style="width: 100%; height: auto; border-radius: 20px;" />
+    </div>
+</div>
+
+{% endblock %}
