@@ -24,8 +24,8 @@
                     <nav class="nav">
                         <ul>
                             <li><a href="{% url 'home' %}">Каталог</a></li>
-                            <li><a href="{% url 'about' %}">Контакты</a></li>
-                            <li><a href="{% url 'contact' %}">Наши партнеры</a></li>
+                            <li><a href="{% url 'contact' %}">Контакты</a></li>
+                            <li><a href="{% url 'partners' %}">Наши партнеры</a></li>
                             <li><a href="{% url 'anketa' %}">Анкетирование</a></li>
                         </ul>
                     </nav>
@@ -54,7 +54,7 @@
             </div>
         </div>
         <div class="main_layout_children_box">
-            <div className="main_page_container">
+            <div class="main_page_container">
                 {% block content %}{% endblock %}
             </div>
         </div>
@@ -65,8 +65,8 @@
                         <div class="footer__links">
                             <ul>
                                 <li><a href="{% url 'home' %}">Каталог</a></li>
-                                <li><a href="{% url 'about' %}">Контакты</a></li>
-                                <li><a href="{% url 'contact' %}">Наши партнеры</a></li>
+                                <li><a href="{% url 'contact' %}">Контакты</a></li>
+                                <li><a href="{% url 'partners' %}">Наши партнеры</a></li>
                                 <li><a href="{% url 'anketa' %}">Анкетирование</a></li>
                             </ul>
                         </div>

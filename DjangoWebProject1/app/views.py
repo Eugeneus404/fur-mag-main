@@ -5,19 +5,40 @@ Definition of views.
 from datetime import datetime
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
+
+from app.models import Category
 from .forms import AnketaForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from collections import defaultdict
 
 def home(request):
     """Renders the home page."""
-    assert isinstance(request, HttpRequest)
+    def build_category_tree(categories, parent_id=None):
+        category_tree = []
+        for category in categories:
+            if category.parent_id == parent_id:
+                children = build_category_tree(categories, parent_id=category.id)
+                category_data = {
+                    'id': category.id,
+                    'parent': category.parent_id,
+                    'name': category.name,
+                    'children': children
+                }
+                category_tree.append(category_data)
+        return category_tree
+
+    categories = Category.objects.all()
+
+    category_tree = build_category_tree(categories)
+
     return render(
         request,
         'app/index.html',
         {
-            'title':'Главная',
-            'year':datetime.now().year,
+            'title': 'Главная',
+            'year': datetime.now().year,
+            'categories': category_tree,
         }
     )
 
@@ -43,6 +64,18 @@ def about(request):
         {
             'title':'О нас',
             'message':'Сведения о нас',
+            'year':datetime.now().year,
+        }
+    )
+
+def partners(request):
+    """Renders the about page."""
+    assert isinstance(request, HttpRequest)
+    return render(
+        request,
+        'app/partners.html',
+        {
+            'title':'Партнеры',
             'year':datetime.now().year,
         }
     )

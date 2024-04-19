@@ -2,19 +2,15 @@
 
 {% block content %}
 
-<h2>{{ title }}.</h2>
-<h3>{{ message }}</h3>
-
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
-
-<address>
-    <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+<div style="margin: 20px 0">
+    <div style="font-size: 24px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
+        Контакты
+    </div>
+    <div>
+        <p><strong>Адрес:</strong> ул. Примерная, д. 123, г. Примерный</p>
+        <p><strong>Телефон:</strong> +7 (123) 456-78-90</p>
+        <p><strong>Время работы:</strong> Понедельник - Пятница: 9:00 - 18:00, Суббота: 10:00 - 15:00, Воскресенье - выходной</p>
+    </div>
+</div>
 
 {% endblock %}

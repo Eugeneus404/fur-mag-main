@@ -3,15 +3,95 @@
 {% block content %}
 
 <div class="main_page_grid_container">
-    <div style="grid-area: 1/1/4/2">
-
+    <div class="categories-container">
+        <div class="main_cat_cont">
+            {% for category in categories %}
+            <div class="category" onmouseover="showChildren(this)" onmouseleave="hideChildren(this)">
+                <div class="category-name">{{ category.name | upper }}</div>
+                <div class="subcategories">
+                    {% for child in category.children %}
+                    <div class="subcategory">
+                        <div class="subcategory-name">{{ child.name }}</div>
+                        <div class="sub-subcategories">
+                            {% for grandchild in child.children %}
+                            <div class="sub-subcategory">{{ "• " | add:grandchild.name }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% if not forloop.last %}
+            <div style="height: 1px; width: calc(100% - 60px); background: white; margin: 0px 30px;"></div>
+            {% endif %}
+            {% endfor %}
+        </div>
     </div>
-    <div class="header_poster" style="border-radius: 20px; padding: 45px 60px; margin-top: 20px; position: relative">
-        <span class="header_poster_text" style="color: #FFF; position: absolute; top: 55px; left: 65px;">
+    <div class="header_poster">
+        <span class="header_poster_text">
             Освежите свой дом новой энергией и стилем с нашей эксклюзивной коллекцией мебели!
         </span>
-        <img src="{% static 'app/content/poster.jpg' %}" alt="Постер" style="width: 100%; height: auto; border-radius: 20px;" />
+        <img src="{% static 'app/content/poster.jpg' %}" alt="Постер" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;" />
     </div>
 </div>
+<div style="margin: 20px 0">
+    <div style="font-size: 24px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
+        Популярные товары
+    </div>
+    <div>
+        <div style="height: 500px; opacity: 0.5; display: flex; justify-content: center; align-items: center">
+            Скоро тут будут товары
+        </div>
+    </div>
+</div>
+<div class="container-info">
+    <div class="text-info">
+        <div style="font-size: 24px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
+            Рады видеть вас в "Мебельном магнате"!
+        </div>
+        <p>
+            В "Мебельном магнате" мы стремимся сделать ваш дом идеальным местом для отдыха, работы и встреч с близкими. Наш магазин предлагает широкий ассортимент мебели для всех помещений вашего дома - от спальни до гостиной, от кухни до ванной комнаты. Мы гордимся тем, что можем удовлетворить самые изысканные вкусы и предпочтения наших клиентов.
+        </p>
+        <p>
+            Наши коллекции мебели созданы с любовью к деталям, с учетом последних тенденций дизайна и функциональности. Мы сотрудничаем только с лучшими производителями, чтобы предложить вам высококачественную мебель по доступным ценам.
+        </p>
+        <p>
+            Независимо от того, ищете ли вы современный минимализм, классический шик или эклектичный дизайн, в "Мебельном магнате" вы найдете все необходимое для создания интерьера вашей мечты. Наши дизайнеры и консультанты с удовольствием помогут вам подобрать идеальные элементы для вашего дома, чтобы каждая комната стала отражением вашего стиля и индивидуальности.
+        </p>
+        <p>
+            Мы также гордимся своим отличным обслуживанием клиентов. Наша команда профессионалов всегда готова ответить на ваши вопросы, помочь с выбором мебели и обеспечить вас удобством при покупке. В "Мебельном магнате" мы стремимся сделать ваше покупательное испытание приятным и удовлетворительным.
+        </p>
+        <p>
+            Не откладывайте обновление вашего дома на потом. Посетите "Мебельный магнат" сегодня и откройте для себя мир красивой и функциональной мебели, который превратит ваш дом в настоящий оазис комфорта и стиля.
+        </p>
+    </div>
+    <div class="image-info">
+        <img src="../../static/app/content/logo.png" alt="Мебельный магнат">
+    </div>
+</div>
+
+<script>
+    function showChildren(category) {
+        var subcategories = category.querySelector('.subcategories');
+        subcategories.style.display = 'grid';
+        category.style.backgroundColor = '#edeef4';
+
+        var firstChild = category.querySelector('.category-name');
+        if (firstChild) {
+            firstChild.style.color = '#75b061';
+        }
+    }
+
+    function hideChildren(category) {
+        var subcategories = category.querySelector('.subcategories');
+        subcategories.style.display = 'none';
+        category.style.backgroundColor = 'transparent';
+
+        var firstChild = category.querySelector('.category-name');
+        if (firstChild) {
+            firstChild.style.color = 'white';
+        }
+    }
+</script>
 
 {% endblock %}
