@@ -14,24 +14,25 @@ from collections import defaultdict
 
 def home(request):
     """Renders the home page."""
-    def build_category_tree(categories, parent_id=None):
+    def build_category_tree(categories, parent_id=None, parent_path=""):
         category_tree = []
         for category in categories:
             if category.parent_id == parent_id:
-                children = build_category_tree(categories, parent_id=category.id)
+                path = f"{parent_path}/{category.url}" if parent_path else category.url
+                children = build_category_tree(categories, parent_id=category.id, parent_path=path)
                 category_data = {
                     'id': category.id,
                     'parent': category.parent_id,
                     'name': category.name,
+                    'url': category.url,
+                    'path': path,
                     'children': children
                 }
                 category_tree.append(category_data)
         return category_tree
 
     categories = Category.objects.all()
-
     category_tree = build_category_tree(categories)
-
     return render(
         request,
         'app/index.html',
@@ -135,3 +136,30 @@ def registration(request):
             'title':'Регистрация',
         }
     )
+
+def dynamic3(request, item1, item2, item3):
+
+    print(item1, item2, item3)
+
+    context = {
+        "title": "Каталог"
+    }
+    return render(request, 'app/dynamic.html', {'title': 'Категория каталога'})
+
+def dynamic2(request, item1, item2):
+
+    print(item1, item2)
+
+    context = {
+        "title": "Каталог"
+    }
+    return render(request, 'app/dynamic.html', {'title': 'Категория каталога'})
+
+def dynamic1(request, item1):
+
+    print(item1)
+
+    context = {
+        "title": "Каталог"
+    }
+    return render(request, 'app/dynamic.html', {'title': 'Категория каталога'})
