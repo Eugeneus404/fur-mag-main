@@ -1,12 +1,123 @@
 ﻿{% extends "app/layout.html" %}
-
+{% load static %}
 {% block content %}
 
 <div style="margin: 20px 0">
-    <div style="font-size: 24px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
-        Категория каталога
+    <div style="font-size: 24px; color: #75b061; font-weight: 600; margin-bottom: 25px;">
+        {% if category.id == 0 %}
+        {{ category.name }}
+        {% else %}
+        <div style="display: flex; gap: 10px; margin-bottom: 20px">
+            <a style="text-decoration: none; color: #75b061" href="/catalog">
+                Каталог •
+            </a>
+            {% for ch in catalog_history %}
+            {% if not forloop.last %}
+            <a style="text-decoration: none; color: #75b061" href="{{ ch.path }}">
+                {{ ch.name }} •
+            </a>
+            {% else %}
+            <a style="text-decoration: none; color: #75b061" href="{{ ch.path }}">
+                {{ ch.name }}
+            </a>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
-    
+    {% if category.id == 0 %}
+    <div style="font-size: 20px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
+        Пожалуйста, проверьте правильность ссылки
+        <div style="display: flex; gap: 20px; margin-top: 15px;">
+            <button class="button-usual"><a style="color: #fff; text-decoration: none;" href="{% url 'home' %}">На главную</a></button>
+            <button class="button-usual"><a style="color: #fff; text-decoration: none;" href="{% url 'catalog' %}">В каталог</a></button>
+        </div>
+    </div>
+    {% else %}
+    {% if category.children|length > 0 %}
+    <div style="display: flex; gap: 20px; margin-bottom: 25px;">
+        {% for child in category.children %}
+        <a style="text-decoration: none" href="{{ "/catalog/" | add:child.path }}">
+            <div style="padding: 10px 20px; font-size: 18px; border: 1px solid #75b061; border-radius: 10px; color: #75b061 ">
+                {{ child.name }}
+            </div>
+            {% endfor %}
+        </a>
+    </div>
+    {% endif %}
+    {% endif %}
+    {% if products|length > 0 %}
+    <div class="filters">
+        <label for="sort-select" style="color: #6E6E6E; margin-right: 10px;">Сортировка:</label>
+        <select id="sort-select" onchange="handleSortChange(this)">
+            {% if sort == 'price_ASC' %}
+            <option value="price_ASC" selected>По возрастанию цены</option>
+            <option value="price_DESC">По убыванию цены</option>
+            {% elif sort == 'price_DESC' %}
+            <option value="price_ASC">По возрастанию цены</option>
+            <option value="price_DESC" selected>По убыванию цены</option>
+            {% else %}
+            <option value="price_ASC">По возрастанию цены</option>
+            <option value="price_DESC">По убыванию цены</option>
+            {% endif %}
+        </select>
+    </div>
+    <div class="product-container">
+        {% for product in products %}
+        <div class="product-card">
+            <div class="product-details">
+                <div class="product-image">
+                    <img src="{% static 'app/content/nophoto.jpg' %}" alt="Нет фото" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;" />
+                </div>
+                <div class="product-card-title">{{ product.name }}</div>
+                <p class="product-card-description">{{ product.description }}</p>
+                {% if product.remain == 0 %}
+                <div class="product-card-price" style="color: #6E6E6E; opacity: 0.8;">{{ product.price|stringformat:"0.0f"}} ₽</div>
+                <div class="product-card-availability">
+                    <p style="width: 100%; text-align: center">Нет в наличии</p>
+                </div>
+                {% else %}
+                <div class="product-card-price" style="color: #75b061">{{ product.price|stringformat:"0.0f"}} ₽</div>
+                {% endif %}
+                {% if product.remain > 0 %}
+                <div class="add-to-cart-form">
+                    <div>
+                        <p>В наличии: {{ product.remain }}</p>
+                        <input type="number" class="quantity-input" value="1" min="1" max="{{ product.remain }}">
+                    </div>
+                    <button class="add-to-cart-button">
+                        <img src="{% static 'app/content/cart.svg' %}" alt="Нет фото" style="width: 30px; object-fit: cover; border-radius: 20px;" />
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="pagination">
+        {% if page.has_previous %}
+        <a href="?page={{ page.previous_page_number }}&sort={{ sort }}">Предыдущая</a>
+        {% endif %}
+        <span>Страница {{ page.number }} из {{ paginator.num_pages }}</span>
+        {% if page.has_next %}
+        <a href="?page={{ page.next_page_number }}&sort={{ sort }}">Следующая</a>
+        {% endif %}
+    </div>
+    {% else %}
+    <div style="font-size: 20px; height: calc(100vh - 390px); opacity: 0.8; display: flex; justify-content: center; align-items: center">
+        Товаров не найдено
+    </div>
+    {% endif %}
 </div>
+
+<script>
+    function handleSortChange(select) {
+        const selectedSort = select.value;
+        const currentPageUrl = window.location.href;
+        const url = new URL(currentPageUrl);
+        url.searchParams.set('sort', selectedSort);
+        window.location.href = url.toString();
+    }
+</script>
 
 {% endblock %}

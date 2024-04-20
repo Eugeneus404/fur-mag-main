@@ -60,6 +60,7 @@
     <Content Include="app\static\app\content\logo.png" />
     <Content Include="app\static\app\content\poster.jpg" />
     <Content Include="app\static\app\content\anketa.css" />
+    <Content Include="app\templates\app\404.html" />
     <Content Include="app\templates\app\dynamic.html" />
     <Content Include="app\templates\app\partners.html" />
     <Content Include="app\templates\app\anketa.html" />

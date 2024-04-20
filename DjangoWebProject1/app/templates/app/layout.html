@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мебельный магнат | {{ title }}</title>
+    <title>{{ title }} | Мебельный магнат</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'app/content/bootstrap.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'app/content/site.css' %}" />
@@ -23,7 +23,7 @@
                     </div>
                     <nav class="nav">
                         <ul>
-                            <li><a href="{% url 'home' %}">Каталог</a></li>
+                            <li><a href="{% url 'catalog' %}">Каталог</a></li>
                             <li><a href="{% url 'contact' %}">Контакты</a></li>
                             <li><a href="{% url 'partners' %}">Наши партнеры</a></li>
                             <li><a href="{% url 'anketa' %}">Анкетирование</a></li>
@@ -64,7 +64,7 @@
                     <div class="footer__content">
                         <div class="footer__links">
                             <ul>
-                                <li><a href="{% url 'home' %}">Каталог</a></li>
+                                <li><a href="{% url 'catalog' %}">Каталог</a></li>
                                 <li><a href="{% url 'contact' %}">Контакты</a></li>
                                 <li><a href="{% url 'partners' %}">Наши партнеры</a></li>
                                 <li><a href="{% url 'anketa' %}">Анкетирование</a></li>

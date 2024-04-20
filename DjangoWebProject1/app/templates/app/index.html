@@ -38,14 +38,41 @@
         <img src="{% static 'app/content/poster.jpg' %}" alt="Постер" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;" />
     </div>
 </div>
-<div style="margin: 20px 0">
+<div style="margin: 40px 0">
     <div style="font-size: 24px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
         Популярные товары
     </div>
-    <div>
-        <div style="height: 500px; opacity: 0.5; display: flex; justify-content: center; align-items: center">
-            Скоро тут будут товары
+    <div class="product-container">
+        {% for product in products %}
+        <div class="product-card">
+            <div class="product-details">
+                <div class="product-image">
+                    <img src="{% static 'app/content/nophoto.jpg' %}" alt="Нет фото" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;" />
+                </div>
+                <div class="product-card-title">{{ product.name }}</div>
+                <p class="product-card-description">{{ product.description }}</p>
+                {% if product.remain == 0 %}
+                <div class="product-card-price" style="color: #6E6E6E; opacity: 0.8;">{{ product.price|stringformat:"0.0f"}} ₽</div>
+                <div class="product-card-availability">
+                    <p style="width: 100%; text-align: center">Нет в наличии</p>
+                </div>
+                {% else %}
+                <div class="product-card-price" style="color: #75b061">{{ product.price|stringformat:"0.0f"}} ₽</div>
+                {% endif %}
+                {% if product.remain > 0 %}
+                <div class="add-to-cart-form">
+                    <div>
+                        <p>В наличии: {{ product.remain }}</p>
+                        <input type="number" class="quantity-input" value="1" min="1" max="{{ product.remain }}">
+                    </div>
+                    <button class="add-to-cart-button">
+                        <img src="{% static 'app/content/cart.svg' %}" alt="Нет фото" style="width: 30px; object-fit: cover; border-radius: 20px;" />
+                    </button>
+                </div>
+                {% endif %}
+            </div>
         </div>
+        {% endfor %}
     </div>
 </div>
 <div class="container-info">

@@ -1,10 +1,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('path/to/custom-arrow.svg');
+    background-position: right center;
+    background-repeat: no-repeat;
+    padding-right: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-size: 16px;
+    color: #333;
+}
+    select:hover {
+        border-color: #aaa;
+    }
+
+    select:focus {
+        border-color: #75b061;
+        outline: none;
+    }
+
+
 * {
     padding: 0;
     margin: 0;
     font-family: "Montserrat", sans-serif;
     transition: all 0.3s;
+}
+
+p {
+    margin: 0;
 }
 
 html,
@@ -271,9 +299,15 @@ body {
     white-space: nowrap;
     margin-bottom: 10px;
 }
-    .subcategory-name:hover {
-        color: #75b061;
-    }
+.subcategory-name:hover {
+    color: #75b061;
+}
+.green-hover {
+    color: #6e6e6e;
+}
+.green-hover:hover {
+    color: #75b061;
+}
 
 
 .sub-subcategories {
@@ -353,3 +387,171 @@ body {
     transform: translateY(-5px);
     transition: transform 0.3s ease;
 }
+
+.button-usual {
+    padding: 10px 20px;
+    background-color: #75b061;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+}
+
+    .button-usual:hover {
+        background-color: #71a75f;
+    }
+
+.product-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-gap: 20px;
+}
+
+.product-card {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-image {
+    flex: 0 0 30%;
+}
+
+.product-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-card-title {
+    width: 100%;
+    text-align: left;
+    color: #75b061;
+    font-weight: 800;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.product-card-description {
+    width: 100%;
+    text-align: justify;
+    color: #6E6E6E;
+    font-size: 16px;
+}
+
+.product-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.product-card-price {
+    text-align: center;
+    color: #75b061;
+    font-weight: 800;
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+.product-card-availability {
+    text-align: right;
+    color: #6E6E6E;
+    font-size: 16px;
+}
+
+.add-to-cart-form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.quantity-input {
+    margin-right: 10px;
+    width: 100px;
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+    .quantity-input:focus {
+        outline: none;
+        border-color: #75b061;
+    }
+.product-card-availability {
+    margin-top: 10px;
+}
+.add-to-cart-button {
+    background-color: #75b061;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 1200px) {
+    .product-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .product-container {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .product-container {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+}
+
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .pagination a,
+    .pagination span {
+        padding: 8px 16px;
+        margin: 0 4px;
+        border: 1px solid #75b061;
+        border-radius: 4px;
+        color: #75b061;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+        .pagination a:hover {
+            background-color: #75b061;
+            color: #fff;
+        }
+
+    .pagination .disabled {
+        pointer-events: none;
+        color: #ccc;
+        border-color: #ccc;
+    }
+
+    .pagination .current {
+        background-color: #75b061;
+        color: #fff;
+    }
+
+    .pagination .page-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
