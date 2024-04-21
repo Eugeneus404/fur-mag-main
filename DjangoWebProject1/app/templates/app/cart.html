@@ -1,0 +1,77 @@
+﻿{% extends "app/layout.html" %}
+{% load static %}
+{% block content %}
+
+<div style="margin: 20px 0">
+    <div style="font-size: 24px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
+        Корзина
+    </div>
+</div>
+<div class="block_offer" style="display: flex; gap: 20px;">
+    <div id="cart-items-container" style="display: flex; flex-direction: column; flex: 0 0 70%; gap: 20px">
+
+    </div>
+    <div style="flex: 0 0 30%; display: flex;" >
+        <div style="display: flex; justify-content: space-between; flex-direction: column; border: 1px solid #ccc; padding: 20px; border-radius: 8px; width: 100%;">
+            <div style="display: flex; flex-direction: column; gap:20px;">
+                <div style="font-size: 24px; font-weight: bold; margin-bottom: 10px; color: #75b061">Оформление заказа</div>
+                <div style="font-size: 20px; margin-top: 20px;">
+                    Общая стоимость: <span id="total-price"></span> ₽
+                </div>
+            </div>
+            <button style="width: 100%; margin-top: 30px;padding: 10px 20px; background-color: #75b061; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Оформить заказ</button>
+        </div>
+    </div>
+</div>
+<div class="no-items" style="font-size: 20px; display: none; flex-direction: column; gap:20px; justify-content: center; align-items: center; height: calc(100vh - 330px); width: 100%">
+    Корзина пуста! Продолжайте покупки!
+    <button class="button-usual"><a style="color: #fff; text-decoration: none;" href="{% url 'catalog' %}">В каталог</a></button>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        var cartItemsContainer = document.getElementById('cart-items-container');
+        var totalPriceElement = document.getElementById('total-price');
+        var totalCost = 0;
+
+        if (cartItems.length === 0) {
+            var elem = document.querySelector('.block_offer');
+            var elem1 = document.querySelector('.no-items');
+            elem.style.display = "none";
+            elem1.style.display = "flex";
+        }
+
+        cartItems.forEach(function (item, index) {
+            var itemElement = document.createElement('div');
+            itemElement.className = 'cart-item';
+            itemElement.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+                    <div style="font-weight: bold; font-size: 20px; color: #75b061; width: 400px;">${item.name}</div>
+                    <div style="font-size: 18px;">Кол-во: ${item.quantity}</div>
+                    <div style="font-size: 18px;">Цена: ${item.price} ₽</div>
+                    <button onclick="removeFromCart(${index})" style="padding: 5px 10px; background-color: #e54747; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Удалить</button>
+                </div>
+            `;
+            cartItemsContainer.appendChild(itemElement);
+            totalCost += (parseFloat(item.quantity) * parseFloat(item.price)); // Предполагается, что у каждого товара есть свойство price
+        });
+
+        totalPriceElement.textContent = totalCost;
+
+        var itemCount = cartItems.length;
+        var cartIcon = document.querySelector('.cart_count');
+        if (itemCount > 0) {
+            cartIcon.style.display = 'flex';
+            cartIcon.innerText = itemCount;
+        }
+    });
+
+    function removeFromCart(index) {
+        var cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        cartItems.splice(index, 1);
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        location.reload(); // Перезагружаем страницу для обновления содержимого корзины
+    }
+</script>
+
+{% endblock %}

@@ -230,7 +230,7 @@ def dynamic3(request, item1, item2, item3):
     title = "Ошибка 404"
     
     products = NULL
-    
+    paginator = NULL
     # Страница и сортировка
     
     page_number = request.GET.get('page')
@@ -355,7 +355,7 @@ def dynamic2(request, item1, item2):
     }
 
     products = NULL
-    
+    paginator = NULL
     # Страница и сортировка
     
     page_number = request.GET.get('page')
@@ -451,9 +451,10 @@ def dynamic1(request, item1):
         return category_tree
     
     def get_category_ids(category_id, tree):
-        ids = [category_id]
+        ids = []
         for category in tree:
             if category['id'] == category_id:
+                ids = [category_id]
                 for child in category.get('children', []):
                     ids.extend(get_category_ids(child['id'], category.get('children', [])))
         return ids
@@ -473,6 +474,7 @@ def dynamic1(request, item1):
     title = "Ошибка 404"
     
     products = NULL
+    paginator = NULL
     
     # Страница и сортировка
     
@@ -535,6 +537,63 @@ def dynamic1(request, item1):
         "paginator": paginator
     }
     return render(request, 'app/dynamic.html', context)
+
+
+def products(request, item):
+    
+    product_data = {
+        'id': 0,
+        'name': "Страница не найдена",
+    }
+    
+    product = Product.objects.filter(id=item).first()
+    products = NULL
+    if product: 
+        product_data = {
+            'id': product.id,
+            'name': product.name,
+        }
+
+        category = product.category
+
+        category_list = []
+
+        while category:
+            category_list.insert(0, {
+                "name": category.name,
+                "url": category.url
+            })
+            category = Category.objects.filter(id=category.parent_id).first()
+
+        category_path = "/catalog/"
+
+        catalog_history = []
+
+        print(category_list)
+
+        for cat in category_list:
+            category_path += f"{cat['url']}/"
+            catalog_history.append({
+                "name": cat["name"],
+                "path": category_path
+            })
+            
+        products = Product.objects.filter(remain__gt=0).exclude(id=product.id).order_by('?')[:4]   
+  
+    context = {
+        "title": product_data["name"],
+        "product_data": product_data,
+        "product": product,
+        "products": products,
+        "catalog_history": catalog_history
+    }
+    return render(request, 'app/products.html', context)
+
+def cart(request):
+    context = {
+        "title": "Корзина",
+    }
+    return render(request, 'app/cart.html', context)
 
 def error_404(request, exception):
     return render(request, 'app/404.html', status=404)

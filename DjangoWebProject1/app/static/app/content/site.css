@@ -415,7 +415,14 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
+    height: 100%;
 }
+
+    .product-card:hover {
+        transform: scale(1.03);
+    }
 
 .product-image {
     flex: 0 0 30%;

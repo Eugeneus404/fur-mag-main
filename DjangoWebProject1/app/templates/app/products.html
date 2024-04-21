@@ -1,0 +1,167 @@
+﻿{% extends "app/layout.html" %}
+{% load static %}
+{% block content %}
+
+<div style="margin: 20px 0">
+    <div style="font-size: 24px; color: #75b061; font-weight: 600; margin-bottom: 25px;">
+        {% if product_data.id == 0 %}
+        {{ category.name }}
+        {% else %}
+        <div style="display: flex; gap: 10px; margin-bottom: 20px">
+            <a style="text-decoration: none; color: #75b061" href="/catalog">
+                Каталог •
+            </a>
+            {% for ch in catalog_history %}
+            {% if not forloop.last %}
+            <a style="text-decoration: none; color: #75b061" href="{{ ch.path }}">
+                {{ ch.name }} •
+            </a>
+            {% else %}
+            <a style="text-decoration: none; color: #75b061" href="{{ ch.path }}">
+                {{ ch.name }}
+            </a>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% if product_data.id == 0 %}
+    <div style="font-size: 20px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
+        Пожалуйста, проверьте правильность ссылки
+        <div style="display: flex; gap: 20px; margin-top: 15px;">
+            <button class="button-usual"><a style="color: #fff; text-decoration: none;" href="{% url 'home' %}">На главную</a></button>
+            <button class="button-usual"><a style="color: #fff; text-decoration: none;" href="{% url 'catalog' %}">В каталог</a></button>
+        </div>
+    </div>
+    {% else %}
+    <div style="margin: 20px 0">
+        <div style="display: flex; gap: 20px;">
+            <div style="flex: 0 0 30%;">
+                <img src="{% static 'app/content/nophoto.jpg' %}" alt="Фото товара" style="width: 100%; height: auto; border-radius: 8px;">
+            </div>
+            <div style="flex: 1;">
+                <div style="font-size: 24px; color: #75b061; font-weight: 800; margin-bottom: 20px;">{{ product.name }}</div>
+                <div style="font-size: 18px; color: #6E6E6E; margin-bottom: 20px;">{{ product.description }}</div>
+            </div>
+            <div style="display: flex; flex-direction: column; justify-content: space-between; flex: 0 0 300px; background-color: #f1f1f1; border-radius: 10px; padding: 20px; height: 180px;">
+                <div style="font-size: 24px; color: #75b061; font-weight: 600; margin-bottom: 10px;">Цена: {{ product.price|stringformat:"0.0f"}} ₽</div>
+                <div class="add-to-cart-form add-to-cart-form-{{ product.id }}" style="display: flex; flex-direction: column; gap: 5px">
+                    {% if product.remain > 0 %}
+                    <div style="display: flex; justify-content: space-between; align-items: center">
+                        <div style="margin-bottom: 10px;">В наличии: {{ product.remain }}</div>
+                        <div>
+                            <input type="number" id="count_input_{{ product.id }}" class="quantity-input" value="1" min="1" max="{{ product.remain }}">
+                        </div>
+                    </div>
+                    <button onclick="addToCart('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')" style="padding: 10px 20px; background-color: #75b061; color: #fff; border: none; border-radius: 5px; cursor: pointer;">В корзину</button>
+                    {% else %}
+                    <div style="color: #6E6E6E; opacity: 0.8; margin-bottom: 10px;">Нет в наличии</div>
+                    {% endif %}
+                </div>
+                <div style="width:100%; text-align: center; display: none;" class="in_cart-{{ product.id }}">
+                    В корзине
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="margin: 40px 0">
+        <div style="font-size: 24px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
+            Похожие товары
+        </div>
+        <div class="product-container">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-details">
+                    <a style="text-decoration: none;" href="/products/{{ product.id }}">
+                        <div class="product-image">
+                            <img src="{% static 'app/content/nophoto.jpg' %}" alt="Нет фото" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;" />
+                        </div>
+                        <div class="product-card-title">{{ product.name }}</div>
+                        <p class="product-card-description">{{ product.description }}</p>
+                        {% if product.remain == 0 %}
+                        <div class="product-card-price" style="color: #6E6E6E; opacity: 0.8;">{{ product.price|stringformat:"0.0f"}} ₽</div>
+                        <div class="product-card-availability">
+                            <p style="width: 100%; text-align: center">Нет в наличии</p>
+                        </div>
+                        {% else %}
+                        <div class="product-card-price" style="color: #75b061">{{ product.price|stringformat:"0.0f"}} ₽</div>
+                        {% endif %}
+                    </a>
+                    {% if product.remain > 0 %}
+                    <div class="add-to-cart-form add-to-cart-form-{{ product.id }}">
+                        <div>
+                            <p style="color: #6e6e6e">В наличии: {{ product.remain }}</p>
+                            <input type="number" id="count_input_{{ product.id }}" class="quantity-input" value="1" min="1" max="{{ product.remain }}">
+                        </div>
+                        <button class="add-to-cart-button" onclick="addToCart('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')">
+                            <img src="{% static 'app/content/cart.svg' %}" alt="Нет фото" style="width: 30px; object-fit: cover; border-radius: 20px;" />
+                        </button>
+                    </div>
+                    <div style="width:100%; text-align: center; display: none;" class="in_cart-{{ product.id }}">
+                        В корзине
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+
+    function addToCart(id, name, price) {
+        var countInput = document.getElementById('count_input_' + id);
+        var quantity = countInput.value;
+
+        var cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        cartItems.push({ id: id, name: name, quantity: quantity, price: price });
+
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+        var itemCount = cartItems.length;
+
+        var cartIcon = document.querySelector('.cart_count');
+        if (itemCount > 0) {
+            cartIcon.style.display = 'flex';
+            cartIcon.innerText = itemCount;
+        }
+
+        cartItems.forEach(function (item) {
+            var productId = item.id;
+
+            var addToCartForm = document.querySelector('.add-to-cart-form-' + productId);
+            var inCartMessage = document.querySelector('.in_cart-' + productId);
+            if (addToCartForm && inCartMessage) {
+                addToCartForm.style.display = 'none';
+                inCartMessage.style.display = 'block';
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        var itemCount = cartItems.length;
+
+        var cartIcon = document.querySelector('.cart_count');
+        if (itemCount > 0) {
+            cartIcon.style.display = 'flex';
+            cartIcon.innerText = itemCount;
+        }
+
+        cartItems.forEach(function (item) {
+            var productId = item.id;
+
+            var addToCartForm = document.querySelector('.add-to-cart-form-' + productId);
+            var inCartMessage = document.querySelector('.in_cart-' + productId);
+            if (addToCartForm && inCartMessage) {
+                addToCartForm.style.display = 'none';
+                inCartMessage.style.display = 'block';
+            }
+        });
+    });
+
+</script>
+
+{% endblock %}
