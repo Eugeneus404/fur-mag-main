@@ -12,13 +12,15 @@ from app.models import Order
 from app.models import OrderProduct
 from .forms import AnketaForm
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from collections import defaultdict
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import random
 import json
 from decimal import Decimal
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     """Renders the home page."""
@@ -599,6 +601,26 @@ def cart(request):
     }
     return render(request, 'app/cart.html', context)
 
+@login_required
+def cabinet(request):
+    if request.method == 'POST':
+        password_form = PasswordChangeForm(request.user, request.POST)
+        if password_form.is_valid():
+            user = password_form.save()
+            update_session_auth_hash(request, user)
+            return redirect('cabinet')
+
+
+    else:
+        password_form = PasswordChangeForm(request.user)
+
+    active_orders = Order.objects.filter(user=request.user)
+    context = {
+        "title": "Кабинет",
+        "active_orders": active_orders,
+        "form": password_form,
+    }
+    return render(request, 'app/cabinet.html', context)
 
 def create_order(request):
     if request.method == "POST":
@@ -622,6 +644,7 @@ def create_order(request):
             return JsonResponse({'error': 'Пользователь не аутентифицирован.'}, status=401)
     else:
         return JsonResponse({'error': 'Метод запроса должен быть POST.'}, status=405)
+
 
 def error_404(request, exception):
     return render(request, 'app/404.html', status=404)

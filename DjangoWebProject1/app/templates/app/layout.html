@@ -36,7 +36,7 @@
                     <div style="display: flex; flex-direction: column">
                         <div style="margin-bottom: 10px;">
                             {% if user.is_authenticated %}
-                            <a href="{% url 'home' %}" style="text-decoration: none; color: #333;">Аккаунт: {{ user.username }}</a>
+                            <a href="{% url 'cabinet' %}" style="text-decoration: none; color: #333;">Аккаунт: {{ user.username }}</a>
                             {% else %}
                             <a href="{% url 'login' %}" style="text-decoration: none; color: #333;">Вход</a>
                             {% endif %}
