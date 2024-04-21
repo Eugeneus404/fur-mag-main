@@ -36,6 +36,8 @@ urlpatterns = [
     path('catalog/<str:item1>/', views.dynamic1, name='dynamic1'),
     path('products/<int:item>/', views.products, name='products'),
     path('cart/', views.cart, name='cart'),
+    
+    path('create_order/', views.create_order, name='create_order'),
 ]
 
 handler404 = views.error_404

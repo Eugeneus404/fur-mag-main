@@ -11,7 +11,7 @@
     <div id="cart-items-container" style="display: flex; flex-direction: column; flex: 0 0 70%; gap: 20px">
 
     </div>
-    <div style="flex: 0 0 30%; display: flex;" >
+    <div style="flex: 0 0 30%; display: flex;">
         <div style="display: flex; justify-content: space-between; flex-direction: column; border: 1px solid #ccc; padding: 20px; border-radius: 8px; width: 100%;">
             <div style="display: flex; flex-direction: column; gap:20px;">
                 <div style="font-size: 24px; font-weight: bold; margin-bottom: 10px; color: #75b061">Оформление заказа</div>
@@ -19,7 +19,13 @@
                     Общая стоимость: <span id="total-price"></span> ₽
                 </div>
             </div>
-            <button style="width: 100%; margin-top: 30px;padding: 10px 20px; background-color: #75b061; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Оформить заказ</button>
+            {% if user.is_authenticated %}
+            <button id="checkout-btn" style="width: 100%; margin-top: 30px;padding: 10px 20px; background-color: #75b061; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Оформить заказ</button>
+            {% else %}
+            <div style="width: 100%; text-align: left; color: #6e6e6e; font-size: 17px; margin-top: 60px;">
+                Войдите в аккаунт, чтобы оформить заказ!
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -64,6 +70,26 @@
             cartIcon.style.display = 'flex';
             cartIcon.innerText = itemCount;
         }
+
+        document.getElementById('checkout-btn').addEventListener('click', function() {
+            fetch("{% url 'create_order' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ cartItems: cartItems })
+            })
+            .then(response => {
+                if (response.ok) {
+                    localStorage.removeItem('cartItems');
+                    location.href = "{% url 'home' %}";
+                } else {
+                    console.error('Ошибка оформления заказа');
+                }
+            })
+            .catch(error => console.error('Ошибка:', error));
+        });
     });
 
     function removeFromCart(index) {

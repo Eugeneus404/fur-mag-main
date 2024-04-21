@@ -5,9 +5,11 @@ Definition of views.
 from asyncio.windows_events import NULL
 from datetime import datetime
 from django.shortcuts import render, redirect, Http404
-from django.http import HttpRequest
+from django.http import HttpRequest, JsonResponse
 from app.models import Category
 from app.models import Product
+from app.models import Order
+from app.models import OrderProduct
 from .forms import AnketaForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -15,6 +17,8 @@ from collections import defaultdict
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import random
+import json
+from decimal import Decimal
 
 def home(request):
     """Renders the home page."""
@@ -594,6 +598,30 @@ def cart(request):
         "title": "Корзина",
     }
     return render(request, 'app/cart.html', context)
+
+
+def create_order(request):
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            cart_items = json.loads(request.body)
+            order = Order.objects.create(user=request.user)
+            print(cart_items)
+            for item in cart_items["cartItems"]:
+                product_id = item['id']
+                quantity = item['quantity']
+                price = item['price']
+
+                price = Decimal(item['price'].replace(',', '.'))
+
+                order_product = OrderProduct.objects.create(order=order, product_id=product_id, count=quantity, price=price)
+
+            request.session['cartItems'] = []
+
+            return JsonResponse({'message': 'Заказ успешно оформлен.'}, status=201)
+        else:
+            return JsonResponse({'error': 'Пользователь не аутентифицирован.'}, status=401)
+    else:
+        return JsonResponse({'error': 'Метод запроса должен быть POST.'}, status=405)
 
 def error_404(request, exception):
     return render(request, 'app/404.html', status=404)
