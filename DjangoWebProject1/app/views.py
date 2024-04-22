@@ -6,8 +6,8 @@ from asyncio.windows_events import NULL
 from datetime import datetime
 from django.shortcuts import render, redirect, Http404
 from django.http import HttpRequest, JsonResponse
-from app.models import Category, Product, Order, OrderProduct, UserProfile
-from .forms import AnketaForm, BootstrapPasswordChangeForm, BootstrapUserCreationForm, UserProfileForm
+from app.models import Category, Product, Order, OrderProduct, UserProfile, Review
+from .forms import AnketaForm, BootstrapPasswordChangeForm, BootstrapUserCreationForm, UserProfileForm, ReviewForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from collections import defaultdict
@@ -43,6 +43,17 @@ def home(request):
     category_tree = build_category_tree(categories)
     
     products = Product.objects.filter(remain__gt=0).order_by('?')[:4]
+    for product in products:
+        reviews = Review.objects.filter(product=product)
+        total_grade = 0
+        total_reviews = len(reviews)
+        for review in reviews:
+            total_grade += review.grade
+        if total_reviews > 0:
+            product.fullGrade = round(total_grade / total_reviews, 1)
+        else:
+            product.fullGrade = 0
+        product.totalReviews = total_reviews
     
     avatar = NULL
     if request.user.is_authenticated:
@@ -83,6 +94,17 @@ def catalog(request):
     category_tree = build_category_tree(categories)
     
     products = Product.objects.filter(remain__gt=0).order_by('?')[:4]
+    for product in products:
+        reviews = Review.objects.filter(product=product)
+        total_grade = 0
+        total_reviews = len(reviews)
+        for review in reviews:
+            total_grade += review.grade
+        if total_reviews > 0:
+            product.fullGrade = round(total_grade / total_reviews, 1)
+        else:
+            product.fullGrade = 0
+        product.totalReviews = total_reviews
     
     avatar = NULL
     if request.user.is_authenticated:
@@ -307,7 +329,6 @@ def dynamic3(request, item1, item2, item3):
                 items_per_page = 8 
 
                 products = Product.objects.filter(category__in=category_ids)
-
                 if sort_param == 'price_DESC':
                     products = products.order_by('-price')
                 else:
@@ -324,6 +345,18 @@ def dynamic3(request, item1, item2, item3):
 
                 page_number = page
                 products = page.object_list
+                for product in products:
+                    reviews = Review.objects.filter(product=product)
+                    total_grade = 0
+                    total_reviews = len(reviews)
+                    for review in reviews:
+                        total_grade += review.grade
+                    if total_reviews > 0:
+                        product.fullGrade = round(total_grade / total_reviews, 1)
+                    else:
+                        product.fullGrade = 0
+                    product.totalReviews = total_reviews
+
                 catalog_history.append({
                     "name": category3.name,
                     "path": catalog_history[1]["path"] + category3.url + "/"
@@ -429,7 +462,7 @@ def dynamic2(request, item1, item2):
             items_per_page = 8 
 
             products = Product.objects.filter(category__in=category_ids)
-
+                
             if sort_param == 'price_DESC':
                 products = products.order_by('-price')
             else:
@@ -446,6 +479,18 @@ def dynamic2(request, item1, item2):
 
             page_number = page
             products = page.object_list
+            for product in products:
+                reviews = Review.objects.filter(product=product)
+                total_grade = 0
+                total_reviews = len(reviews)
+                for review in reviews:
+                    total_grade += review.grade
+                if total_reviews > 0:
+                    product.fullGrade = round(total_grade / total_reviews, 1)
+                else:
+                    product.fullGrade = 0
+                product.totalReviews = total_reviews
+                
             catalog_history.append({
                 "name": category2.name,
                 "path": catalog_history[0]["path"] + category2.url + "/"
@@ -563,6 +608,18 @@ def dynamic1(request, item1):
 
         page_number = page
         products = page.object_list
+        for product in products:
+            reviews = Review.objects.filter(product=product)
+            total_grade = 0
+            total_reviews = len(reviews)
+            for review in reviews:
+                total_grade += review.grade
+            if total_reviews > 0:
+                product.fullGrade = round(total_grade / total_reviews, 1)
+            else:
+                product.fullGrade = 0
+            product.totalReviews = total_reviews
+            
         catalog_history.append({
             "name": category.name,
             "path": "/catalog/" + category.url + "/"
@@ -589,13 +646,19 @@ def dynamic1(request, item1):
 
 def products(request, item):
     
+    review_form = ReviewForm()
+
     product_data = {
         'id': 0,
         'name': "Страница не найдена",
     }
     
     product = Product.objects.filter(id=item).first()
-    products = NULL
+    products = None
+    reviews = None
+    avatar = None
+    userReview = None
+    
     if product: 
         product_data = {
             'id': product.id,
@@ -603,7 +666,6 @@ def products(request, item):
         }
 
         category = product.category
-
         category_list = []
 
         while category:
@@ -614,10 +676,7 @@ def products(request, item):
             category = Category.objects.filter(id=category.parent_id).first()
 
         category_path = "/catalog/"
-
         catalog_history = []
-
-        print(category_list)
 
         for cat in category_list:
             category_path += f"{cat['url']}/"
@@ -627,17 +686,66 @@ def products(request, item):
             })
             
         products = Product.objects.filter(remain__gt=0).exclude(id=product.id).order_by('?')[:4]   
-  
-    avatar = NULL
+        for productF in products:
+            reviews = Review.objects.filter(product=productF)
+            total_grade = 0
+            total_reviews = len(reviews)
+            for review in reviews:
+                total_grade += review.grade
+            if total_reviews > 0:
+                productF.fullGrade = round(total_grade / total_reviews, 1)
+            else:
+                productF.fullGrade = 0
+            productF.totalReviews = total_reviews
+        reviews = Review.objects.filter(product=product.id)
+
+        reviews_with_user_info = []
+
+        for review in reviews:
+            user = User.objects.filter(id=review.user_id).first()
+            if user:
+                user_profile = UserProfile.objects.filter(user=user).first()
+                
+                avatar_url = None
+                if user_profile:
+                    avatar_url = user_profile.avatar.url
+                    
+                print(review)
+                print(user)
+                print(avatar_url)
+                reviews_with_user_info.append({
+                    'id': review.id,
+                    'review': review,
+                    'user': user,
+                    'avatar_url': avatar_url
+                })
+
+        
+        if request.method == 'POST':
+            review_form = ReviewForm(request.POST)
+            if review_form.is_valid():
+                new_review = review_form.save(commit=False)
+                new_review.product = product
+                new_review.user = request.user
+                new_review.save()
+                return redirect('products', item=item)
+    else:
+        review_form = ReviewForm()
+
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
+        userReview = Review.objects.filter(user=request.user, product=product.id).first()
+        
     context = {
         "title": product_data["name"],
         "product_data": product_data,
         "product": product,
         "products": products,
         "catalog_history": catalog_history,
-        "avatar": avatar
+        "avatar": avatar,
+        "reviews": reviews_with_user_info,
+        "form": review_form,
+        "userReview": userReview
     }
     return render(request, 'app/products.html', context)
 

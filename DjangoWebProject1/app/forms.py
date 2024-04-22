@@ -6,7 +6,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm
 from django.utils.translation import gettext_lazy as _
 from django.core.files.images import get_image_dimensions
-from .models import UserProfile
+from .models import UserProfile, Review
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
@@ -91,3 +91,16 @@ class AnketaForm(forms.Form):
     email = forms.EmailField(label='E-mail', max_length=100)
     notice = forms.BooleanField(label='Получать новости сайта', required=False)
     message = forms.CharField(label='Короткое резюме', widget=forms.Textarea)
+    
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['text', 'grade']
+        labels = {
+            'text': 'Текст отзыва',
+            'grade': 'Оценка',
+        }
+        widgets = {
+            'text': forms.Textarea(attrs={'rows': 4}),
+        }
