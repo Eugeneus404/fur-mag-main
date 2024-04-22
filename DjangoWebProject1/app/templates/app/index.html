@@ -31,11 +31,14 @@
             {% endfor %}
         </div>
     </div>
-    <div class="header_poster">
-        <span class="header_poster_text">
+    <div class="header_poster" style="position: relative; border-radius: 20px; overflow: hidden;">
+        <video autoplay loop muted style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px">
+            <source src="/media/video1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <span class="header_poster_text" style="position: absolute; z-index: 1; color: #fff; font-size: 36px; font-weight: 600; text-align: left;">
             Освежите свой дом новой энергией и стилем с нашей эксклюзивной коллекцией мебели!
         </span>
-        <img src="{% static 'app/content/poster.jpg' %}" alt="Постер" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;" />
     </div>
 </div>
 <div style="margin: 40px 0">
@@ -107,7 +110,20 @@
         <img src="../../static/app/content/logo.png" alt="Мебельный магнат">
     </div>
 </div>
-
+<div class="video-cont-parent" style="position: relative; border-radius: 20px; overflow: hidden;">
+    <div class="video-cont">
+        <div style="width: 50%; display: flex; gap: 30px;">
+            <div class="video-text">Посмотрите на то, как наши мастера бережно изготавливают вашу мебель!</div>
+            <div class="video-image-info">
+                <img src="../../static/app/content/logo.png" alt="Мебельный магнат">
+            </div>
+        </div>
+    </div>
+    <video autoplay loop muted style="width: 100%;">
+        <source src="/media/video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
 <script>
     function showChildren(category) {
         var subcategories = category.querySelector('.subcategories');

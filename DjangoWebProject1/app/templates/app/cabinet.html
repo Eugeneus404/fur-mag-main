@@ -9,13 +9,34 @@
 </div>
 <div style="margin: 20px 0">
     <div style="font-size: 20px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
+        Аватар
+    </div>
+</div>
+{% if avatar %}
+<div class="avatar-container">
+    <img src="{{ avatar.avatar.url }}" alt="Avatar" class="avatar-image">
+</div>
+{% else %}
+<div class="avatar-container">
+    <div class="avatar-placeholder">Нет аватарки</div>
+</div>
+{% endif %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ avatar_form.as_p }}
+    <input type="hidden" name="avatar_upload" value="1">
+    <button type="submit" style="margin-top: 10px; padding: 10px; border: none; border-radius: 5px; background-color: #75b061; color: #fff; font-size: 16px; cursor: pointer;">Загрузить</button>
+</form>
+<div style="margin: 20px 0">
+    <div style="font-size: 20px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
         Изменить пароль
     </div>
 </div>
-<form method="post">
+<form method="post" style="max-width: 500px;">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" style="margin-bottom: 10px; padding: 10px; border: none; border-radius: 5px; background-color: #75b061; color: #fff; font-size: 16px; cursor: pointer;">Изменить</button>
+    <input type="hidden" name="password_change" value="1">
+    <button type="submit" style="margin-top: 10px; padding: 10px; border: none; border-radius: 5px; background-color: #75b061; color: #fff; font-size: 16px; cursor: pointer;">Изменить</button>
 </form>
 <div style="margin: 20px 0">
     <div style="font-size: 20px; color: #75b061; font-weight: 600; margin-bottom: 30px;">

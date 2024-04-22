@@ -44,16 +44,16 @@
                 <div style="font-size: 18px; color: #6E6E6E; margin-bottom: 20px;">{{ product.description }}</div>
             </div>
             <div style="display: flex; flex-direction: column; justify-content: space-between; flex: 0 0 300px; background-color: #f1f1f1; border-radius: 10px; padding: 20px; height: 180px;">
-                <div style="font-size: 24px; color: #75b061; font-weight: 600; margin-bottom: 10px;">Цена: {{ product.price|stringformat:"0.0f"}} ₽</div>
-                <div class="add-to-cart-form add-to-cart-form-{{ product.id }}" style="display: flex; flex-direction: column; gap: 5px">
+                <div style="font-size: 24px; color: #75b061; font-weight: 600; margin-bottom: 10px; text-align: center">Цена: {{ product.price|stringformat:"0.0f"}} ₽</div>
+                <div class="add-to-cart-form add-to-cart-form-{{ product.id }}" style="display: flex; flex-direction: column; gap: 20px">
                     {% if product.remain > 0 %}
                     <div style="display: flex; justify-content: space-between; align-items: center">
-                        <div style="margin-bottom: 10px;">В наличии: {{ product.remain }}</div>
+                        <div style="margin-right: 10px;">В наличии: {{ product.remain }}</div>
                         <div>
                             <input type="number" id="count_input_{{ product.id }}" class="quantity-input" value="1" min="1" max="{{ product.remain }}">
                         </div>
                     </div>
-                    <button onclick="addToCart('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')" style="padding: 10px 20px; background-color: #75b061; color: #fff; border: none; border-radius: 5px; cursor: pointer;">В корзину</button>
+                    <button onclick="addToCart('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')" style="width: 100%; padding: 10px 20px; background-color: #75b061; color: #fff; border: none; border-radius: 5px; cursor: pointer;">В корзину</button>
                     {% else %}
                     <div style="color: #6E6E6E; opacity: 0.8; margin-bottom: 10px;">Нет в наличии</div>
                     {% endif %}
@@ -62,6 +62,14 @@
                     В корзине
                 </div>
             </div>
+        </div>
+    </div>
+    <div style="margin: 40px 0">
+        <div style="font-size: 24px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
+            Отзывы
+        </div>
+        <div>
+
         </div>
     </div>
     <div style="margin: 40px 0">
@@ -164,4 +172,4 @@
 
 </script>
 
-{% endblock %}
+    {% endblock %}

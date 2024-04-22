@@ -6,11 +6,8 @@ from asyncio.windows_events import NULL
 from datetime import datetime
 from django.shortcuts import render, redirect, Http404
 from django.http import HttpRequest, JsonResponse
-from app.models import Category
-from app.models import Product
-from app.models import Order
-from app.models import OrderProduct
-from .forms import AnketaForm
+from app.models import Category, Product, Order, OrderProduct, UserProfile
+from .forms import AnketaForm, BootstrapPasswordChangeForm, BootstrapUserCreationForm, UserProfileForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from collections import defaultdict
@@ -46,6 +43,10 @@ def home(request):
     category_tree = build_category_tree(categories)
     
     products = Product.objects.filter(remain__gt=0).order_by('?')[:4]
+    
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
 
     return render(
         request,
@@ -55,6 +56,7 @@ def home(request):
             'year': datetime.now().year,
             'categories': category_tree,
             'products': products,
+            'avatar': avatar
         }
     )
 
@@ -81,6 +83,10 @@ def catalog(request):
     category_tree = build_category_tree(categories)
     
     products = Product.objects.filter(remain__gt=0).order_by('?')[:4]
+    
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
 
     return render(
         request,
@@ -90,12 +96,18 @@ def catalog(request):
             'year': datetime.now().year,
             'categories': category_tree,
             'products': products,
+            'avatar': avatar
         }
     )
 
 def contact(request):
     """Renders the contact page."""
     assert isinstance(request, HttpRequest)
+    
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
+
     return render(
         request,
         'app/contact.html',
@@ -103,12 +115,18 @@ def contact(request):
             'title':'Контакты',
             'message':'Страница с нашими контактами',
             'year':datetime.now().year,
+            'avatar': avatar
         }
     )
 
 def about(request):
     """Renders the about page."""
     assert isinstance(request, HttpRequest)
+    
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
+
     return render(
         request,
         'app/about.html',
@@ -116,18 +134,25 @@ def about(request):
             'title':'О нас',
             'message':'Сведения о нас',
             'year':datetime.now().year,
+            'avatar': avatar
         }
     )
 
 def partners(request):
     """Renders the about page."""
     assert isinstance(request, HttpRequest)
+    
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
+
     return render(
         request,
         'app/partners.html',
         {
             'title':'Партнеры',
             'year':datetime.now().year,
+            'avatar':avatar
         }
     )
 
@@ -162,7 +187,7 @@ def anketa(request):
 def registration(request):
     """Renders the registration page."""
     if request.method == "POST":
-        regform = UserCreationForm(request.POST)
+        regform = BootstrapUserCreationForm(request.POST)
         if regform.is_valid():
             reg_f = regform.save(commit=False)
             reg_f.is_staff = False
@@ -175,8 +200,13 @@ def registration(request):
             
             return redirect("home")
     else:
-        regform = UserCreationForm()
+        regform = BootstrapUserCreationForm()
     assert isinstance(request, HttpRequest)
+    
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
+
     return render(
         request,
         "app/registration.html",
@@ -184,6 +214,7 @@ def registration(request):
             'regform': regform,
             'year': datetime.now().year,
             'title':'Регистрация',
+            'avatar': avatar
         }
     )
 
@@ -299,7 +330,9 @@ def dynamic3(request, item1, item2, item3):
                 })
                 title = category3.name
                 category_data = find_category_in_tree(category3.id, category_tree)
-    
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
     context = {
         "title": title,
         "category": category_data,
@@ -307,7 +340,8 @@ def dynamic3(request, item1, item2, item3):
         "products": products,
         "page": page_number,
         "sort": sort_param,
-        "paginator": paginator
+        "paginator": paginator,
+        "avatar": avatar
     }
     return render(request, 'app/dynamic.html', context)
 
@@ -418,7 +452,9 @@ def dynamic2(request, item1, item2):
             })
             title = category2.name
             category_data = find_category_in_tree(category2.id, category_tree)
-    
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
     context = {
         "title": title,
         "category": category_data,
@@ -426,7 +462,8 @@ def dynamic2(request, item1, item2):
         "products": products,
         "page": page_number,
         "sort": sort_param,
-        "paginator": paginator
+        "paginator": paginator,
+        "avatar": avatar
     }
     return render(request, 'app/dynamic.html', context)
 
@@ -533,7 +570,10 @@ def dynamic1(request, item1):
         title = category.name
         category_data = find_category_in_tree(category.id, category_tree)
    
-
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
+    
     context = {
         "title": title,
         "category": category_data,
@@ -541,7 +581,8 @@ def dynamic1(request, item1):
         "products": products,
         "page": page_number,
         "sort": sort_param,
-        "paginator": paginator
+        "paginator": paginator,
+        "avatar": avatar
     }
     return render(request, 'app/dynamic.html', context)
 
@@ -587,33 +628,54 @@ def products(request, item):
             
         products = Product.objects.filter(remain__gt=0).exclude(id=product.id).order_by('?')[:4]   
   
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
     context = {
         "title": product_data["name"],
         "product_data": product_data,
         "product": product,
         "products": products,
-        "catalog_history": catalog_history
+        "catalog_history": catalog_history,
+        "avatar": avatar
     }
     return render(request, 'app/products.html', context)
 
 def cart(request):
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
     context = {
         "title": "Корзина",
+        "avatar": avatar
     }
     return render(request, 'app/cart.html', context)
 
 @login_required
 def cabinet(request):
-    if request.method == 'POST':
-        password_form = PasswordChangeForm(request.user, request.POST)
+    if request.method == 'POST' and 'password_change' in request.POST:
+        password_form = BootstrapPasswordChangeForm(request.user, request.POST)
         if password_form.is_valid():
             user = password_form.save()
             update_session_auth_hash(request, user)
             return redirect('cabinet')
-
-
     else:
-        password_form = PasswordChangeForm(request.user)
+        password_form = BootstrapPasswordChangeForm(request.user)
+
+    if request.method == 'POST' and 'avatar_upload' in request.POST:  
+        avatar_form = UserProfileForm(request.POST, request.FILES)
+        if avatar_form.is_valid() and 'avatar_upload' in request.POST:
+            avatar_data = avatar_form.cleaned_data['avatar']
+            user_profile = UserProfile.objects.filter(user=request.user).first()
+            if user_profile:
+                user_profile.avatar = avatar_data
+                user_profile.save()
+            else:
+                avatar = avatar_form.save(commit=False)
+                avatar.user = request.user
+                avatar.save()
+    else:
+        avatar_form = UserProfileForm()
 
     active_orders = Order.objects.filter(user=request.user)
 
@@ -621,10 +683,16 @@ def cabinet(request):
         order.items = OrderProduct.objects.filter(order=order)
         order.total_cost = sum(item.price * item.count for item in order.items)
         
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
+        
     context = {
         "title": "Кабинет",
         "active_orders": active_orders,
         "form": password_form,
+        "avatar_form": avatar_form,
+        "avatar": avatar,
     }
     return render(request, 'app/cabinet.html', context)
 

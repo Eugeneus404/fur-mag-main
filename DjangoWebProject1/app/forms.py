@@ -3,20 +3,75 @@ Definition of forms.
 """
 
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm
 from django.utils.translation import gettext_lazy as _
+from django.core.files.images import get_image_dimensions
+from .models import UserProfile
 
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['avatar']
+        labels = {'avatar': ''}
+        
+    def clean_avatar(self):
+        avatar = self.cleaned_data['avatar']
+
+        try:
+            main, sub = avatar.content_type.split('/')
+            if not (main == 'image' and sub in ['jpeg', 'pjpeg', 'gif', 'png']):
+                raise forms.ValidationError(u'Please use a JPEG, '
+                    'GIF or PNG image.')
+
+        except AttributeError:
+            """
+            Handles case when we are updating the user profile
+            and do not supply a new avatar
+            """
+            pass
+
+        return avatar
+        
 class BootstrapAuthenticationForm(AuthenticationForm):
     """Authentication form which uses boostrap CSS."""
     username = forms.CharField(max_length=254,
                                widget=forms.TextInput({
-                                   'class': 'form-control',
+                                   'class': 'form-control custom-input',
                                    'placeholder': 'Имя пользователя'}))
     password = forms.CharField(label=_("Password"),
                                widget=forms.PasswordInput({
-                                   'class': 'form-control',
+                                   'class': 'form-control custom-input',
                                    'placeholder':'Пароль'}))
     
+class BootstrapUserCreationForm(UserCreationForm):
+    """User creation form which uses bootstrap CSS."""
+    username = forms.CharField(max_length=254,
+                               widget=forms.TextInput({
+                                   'class': 'form-control custom-input',
+                                   'placeholder': 'Имя пользователя'}))
+    password1 = forms.CharField(label=_("Password"),
+                                widget=forms.PasswordInput({
+                                    'class': 'form-control custom-input',
+                                    'placeholder': 'Пароль'}))
+    password2 = forms.CharField(label=_("Password confirmation"),
+                                widget=forms.PasswordInput({
+                                    'class': 'form-control custom-input',
+                                    'placeholder': 'Подтверждение пароля'}))
+
+class BootstrapPasswordChangeForm(PasswordChangeForm):
+    """Password change form which uses bootstrap CSS."""
+    old_password = forms.CharField(label=_("Old password"),
+                                   widget=forms.PasswordInput({
+                                       'class': 'form-control custom-input',
+                                       'placeholder': 'Старый пароль'}))
+    new_password1 = forms.CharField(label=_("New password"),
+                                    widget=forms.PasswordInput({
+                                        'class': 'form-control custom-input',
+                                        'placeholder': 'Новый пароль'}))
+    new_password2 = forms.CharField(label=_("New password confirmation"),
+                                    widget=forms.PasswordInput({
+                                        'class': 'form-control custom-input',
+                                        'placeholder': 'Подтверждение нового пароля'}))
     
 class AnketaForm(forms.Form):
     name = forms.CharField(label='Имя', max_length=100)
