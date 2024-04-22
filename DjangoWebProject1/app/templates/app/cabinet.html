@@ -7,20 +7,90 @@
         Личный кабинет
     </div>
 </div>
-
-<!-- Форма для смены имени и пароля -->
+<div style="margin: 20px 0">
+    <div style="font-size: 20px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
+        Изменить пароль
+    </div>
+</div>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Изменить</button>
+    <button type="submit" style="margin-bottom: 10px; padding: 10px; border: none; border-radius: 5px; background-color: #75b061; color: #fff; font-size: 16px; cursor: pointer;">Изменить</button>
 </form>
-
-<!-- Активные заказы пользователя -->
-<h2>Активные заказы</h2>
-<ul>
+<div style="margin: 20px 0">
+    <div style="font-size: 20px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
+        Аквтивные заказы
+    </div>
+</div>
+{% if active_orders %}
+<div class="orders-block" style="display: flex; flex-direction:column; width: 100%; margin-bottom: 20px; gap: 15px;">
     {% for order in active_orders %}
-    <li>Заказ №{{ order.id }} - {{ order.created_at }}</li>
+    <div style="display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #ccc; padding: 20px; border-radius: 20px">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+            <div style="width: 300px; font-weight: bold; color: #75b061">Заказ №{{ order.id }} - от {{ order.created_at }}</div>
+            <div style="width: 160px; margin-left: 20px;">Кол-во товаров: <b style="color: #75b061">{{ order.items.count }}</b></div>
+            <div style="width: 200px; margin-left: 20px;">Общая сумма: <b style="color: #75b061">{{ order.total_cost }} ₽</b></div>
+        </div>
+        <div style="display: flex; align-items: center; width: 100%; gap: 20px;">
+            <div style="display: flex; width: fit-content">
+                <button class="show-items-btn show-items-btn-{{ order.id }}" onclick="toggleOrderItems({{ order.id }})" style="padding: 5px 10px; background-color: #75b061; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Показать товары</button>
+            </div>
+            <div style="display: flex; width: fit-content">
+                <button class="show-items-btn show-items-btn-{{ order.id }}" onclick="deleteOrder({{ order.id }})" style="padding: 5px 10px; background-color: #e54747; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Удалить заказ</button>
+            </div>
+        </div>
+        <div class="order-items" id="order-items-{{ order.id }}" style="display: none; margin: 10px 0 0 20px">
+            <ul>
+                {% for item in order.items.all %}
+                <li>{{ item.product.name }} - {{ item.count }} шт. - {{ item.price }} ₽ за ед.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
     {% endfor %}
-</ul>
+</div>
+{% else %}
+<div style="font-size: 20px; height: 200px; opacity: 0.8; display: flex; justify-content: center; align-items: center">
+    Активных заказов не найдено
+</div>
+{% endif %}
+
+<script>
+    function toggleOrderItems(orderId) {
+        var itemsDiv = document.getElementById('order-items-' + orderId);
+        var button = document.querySelector('.show-items-btn-' + orderId);
+        if (itemsDiv.style.display === 'none') {
+            itemsDiv.style.display = 'block';
+            button.innerText = 'Скрыть товары';
+        } else {
+            itemsDiv.style.display = 'none';
+            button.innerText = 'Показать товары';
+        }
+    }
+
+    function deleteOrder(orderId) {
+        if (confirm("Вы уверены, что хотите удалить этот заказ?")) {
+            fetch(`/delete_order/${orderId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Ошибка удаления заказа');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    location.reload();
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+        }
+    }
+</script>
 
 {% endblock %}

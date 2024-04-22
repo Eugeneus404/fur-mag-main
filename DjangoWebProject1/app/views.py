@@ -21,6 +21,7 @@ import json
 from decimal import Decimal
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 
 def home(request):
     """Renders the home page."""
@@ -615,6 +616,11 @@ def cabinet(request):
         password_form = PasswordChangeForm(request.user)
 
     active_orders = Order.objects.filter(user=request.user)
+
+    for order in active_orders:
+        order.items = OrderProduct.objects.filter(order=order)
+        order.total_cost = sum(item.price * item.count for item in order.items)
+        
     context = {
         "title": "Кабинет",
         "active_orders": active_orders,
@@ -644,6 +650,18 @@ def create_order(request):
             return JsonResponse({'error': 'Пользователь не аутентифицирован.'}, status=401)
     else:
         return JsonResponse({'error': 'Метод запроса должен быть POST.'}, status=405)
+    
+@require_POST
+def delete_order(request, order_id):
+    if request.user.is_authenticated:
+        try:
+            order = Order.objects.get(pk=order_id, user=request.user)
+            order.delete()
+            return JsonResponse({'message': 'Заказ успешно удален.'}, status=200)
+        except Order.DoesNotExist:
+            return JsonResponse({'error': 'Указанный заказ не существует или не принадлежит текущему пользователю.'}, status=404)
+    else:
+        return JsonResponse({'error': 'Пользователь не аутентифицирован.'}, status=401)
 
 
 def error_404(request, exception):
