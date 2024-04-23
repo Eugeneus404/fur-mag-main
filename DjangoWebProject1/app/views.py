@@ -6,7 +6,7 @@ from asyncio.windows_events import NULL
 from datetime import datetime
 from django.shortcuts import render, redirect, Http404
 from django.http import HttpRequest, JsonResponse
-from app.models import Category, Product, Order, OrderProduct, UserProfile, Review
+from app.models import Category, Product, Order, OrderProduct, UserProfile, Review, Image
 from .forms import AnketaForm, BootstrapPasswordChangeForm, BootstrapUserCreationForm, UserProfileForm, ReviewForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
@@ -45,6 +45,7 @@ def home(request):
     products = Product.objects.filter(remain__gt=0).order_by('?')[:4]
     for product in products:
         reviews = Review.objects.filter(product=product)
+        images = Image.objects.filter(product=product)
         total_grade = 0
         total_reviews = len(reviews)
         for review in reviews:
@@ -54,6 +55,7 @@ def home(request):
         else:
             product.fullGrade = 0
         product.totalReviews = total_reviews
+        product.images = images
     
     avatar = NULL
     if request.user.is_authenticated:
@@ -96,6 +98,7 @@ def catalog(request):
     products = Product.objects.filter(remain__gt=0).order_by('?')[:4]
     for product in products:
         reviews = Review.objects.filter(product=product)
+        images = Image.objects.filter(product=product)
         total_grade = 0
         total_reviews = len(reviews)
         for review in reviews:
@@ -105,6 +108,7 @@ def catalog(request):
         else:
             product.fullGrade = 0
         product.totalReviews = total_reviews
+        product.images = images
     
     avatar = NULL
     if request.user.is_authenticated:
@@ -347,6 +351,7 @@ def dynamic3(request, item1, item2, item3):
                 products = page.object_list
                 for product in products:
                     reviews = Review.objects.filter(product=product)
+                    images = Image.objects.filter(product=product)
                     total_grade = 0
                     total_reviews = len(reviews)
                     for review in reviews:
@@ -356,6 +361,7 @@ def dynamic3(request, item1, item2, item3):
                     else:
                         product.fullGrade = 0
                     product.totalReviews = total_reviews
+                    product.images = images
 
                 catalog_history.append({
                     "name": category3.name,
@@ -481,6 +487,7 @@ def dynamic2(request, item1, item2):
             products = page.object_list
             for product in products:
                 reviews = Review.objects.filter(product=product)
+                images = Image.objects.filter(product=product)
                 total_grade = 0
                 total_reviews = len(reviews)
                 for review in reviews:
@@ -490,6 +497,7 @@ def dynamic2(request, item1, item2):
                 else:
                     product.fullGrade = 0
                 product.totalReviews = total_reviews
+                product.images = images
                 
             catalog_history.append({
                 "name": category2.name,
@@ -610,6 +618,7 @@ def dynamic1(request, item1):
         products = page.object_list
         for product in products:
             reviews = Review.objects.filter(product=product)
+            images = Image.objects.filter(product=product)
             total_grade = 0
             total_reviews = len(reviews)
             for review in reviews:
@@ -619,6 +628,7 @@ def dynamic1(request, item1):
             else:
                 product.fullGrade = 0
             product.totalReviews = total_reviews
+            product.images = images
             
         catalog_history.append({
             "name": category.name,
@@ -660,6 +670,8 @@ def products(request, item):
     userReview = None
     
     if product: 
+        images = Image.objects.filter(product=product)
+        product.images = images
         product_data = {
             'id': product.id,
             'name': product.name,
@@ -688,6 +700,7 @@ def products(request, item):
         products = Product.objects.filter(remain__gt=0).exclude(id=product.id).order_by('?')[:4]   
         for productF in products:
             reviews = Review.objects.filter(product=productF)
+            images = Image.objects.filter(product=productF)
             total_grade = 0
             total_reviews = len(reviews)
             for review in reviews:
@@ -697,6 +710,7 @@ def products(request, item):
             else:
                 productF.fullGrade = 0
             productF.totalReviews = total_reviews
+            productF.images = images
         reviews = Review.objects.filter(product=product.id)
 
         reviews_with_user_info = []
@@ -786,6 +800,7 @@ def cabinet(request):
         avatar_form = UserProfileForm()
 
     active_orders = Order.objects.filter(user=request.user)
+    user_reviews = Review.objects.filter(user=request.user)
 
     for order in active_orders:
         order.items = OrderProduct.objects.filter(order=order)
@@ -801,6 +816,7 @@ def cabinet(request):
         "form": password_form,
         "avatar_form": avatar_form,
         "avatar": avatar,
+        "reviews": user_reviews
     }
     return render(request, 'app/cabinet.html', context)
 
@@ -836,6 +852,18 @@ def delete_order(request, order_id):
             return JsonResponse({'message': 'Заказ успешно удален.'}, status=200)
         except Order.DoesNotExist:
             return JsonResponse({'error': 'Указанный заказ не существует или не принадлежит текущему пользователю.'}, status=404)
+    else:
+        return JsonResponse({'error': 'Пользователь не аутентифицирован.'}, status=401)
+    
+@require_POST
+def delete_review(request, review_id):
+    if request.user.is_authenticated:
+        try:
+            review = Review.objects.get(pk=review_id, user=request.user)
+            review.delete()
+            return JsonResponse({'message': 'Отзыв успешно удален.'}, status=200)
+        except Order.DoesNotExist:
+            return JsonResponse({'error': 'Отзыв не существует или не принадлежит текущему пользователю.'}, status=404)
     else:
         return JsonResponse({'error': 'Пользователь не аутентифицирован.'}, status=401)
 

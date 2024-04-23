@@ -9,6 +9,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'app/content/site.css' %}" />
     <link rel="icon" type="image/png" href="{% static 'app/content/logo.png' %}">
     <script src="{% static 'app/scripts/modernizr-2.6.2.js' %}"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -21,7 +25,7 @@
                             <img class="image image_main_logo" src="{% static 'app/content/logo.png' %}" alt="logo" />
                         </a>
                     </div>
-                    <nav class="nav">
+                    <nav class="nav" style="font-size: 17px !important;">
                         <ul>
                             <li><a href="{% url 'catalog' %}">Каталог</a></li>
                             <li><a href="{% url 'contact' %}">Контакты</a></li>
@@ -29,7 +33,7 @@
                             <li><a href="{% url 'anketa' %}">Анкетирование</a></li>
                         </ul>
                     </nav>
-                    <div style="display: flex; flex-direction: column">
+                    <div style="display: flex; flex-direction: column; font-size: 17px !important;">
                         <div style="margin-bottom: 10px;">
                             {% if user.is_authenticated %}
                             <a href="{% url 'cabinet' %}" style="text-decoration: none; color: #333;">Аккаунт: {{ user.username }}</a>
@@ -66,7 +70,7 @@
         </div>
         <div class="main_layout_footer_box">
             <div class="inner_container">
-                <footer class="footer">
+                <footer class="footer" style="font-size: 17px !important;">
                     <div class="footer__content">
                         <div class="footer__links">
                             <ul>

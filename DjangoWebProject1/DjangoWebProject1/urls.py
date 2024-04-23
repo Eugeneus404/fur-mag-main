@@ -43,6 +43,7 @@ urlpatterns = [
     
     path('create_order/', views.create_order, name='create_order'),
     path('delete_order/<int:order_id>/', views.delete_order, name='delete_order'),
+    path('delete_review/<int:review_id>/', views.delete_review, name='delete_review'),
 ]
 
 handler404 = views.error_404
