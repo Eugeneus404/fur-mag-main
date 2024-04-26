@@ -1,0 +1,22 @@
+{% extends "app/layout.html" %}
+{% load static %}
+{% block content %}
+
+<div style="margin: 20px 0">
+    <div style="display: flex; width: 100%; justify-content: space-between; align-items: center; font-size: 28px; color: #75b061; font-weight: 600; margin-bottom: 30px;">
+        <div>
+            Новости сайта
+        </div>
+        <div style="width: 220px;">
+            <div style="display: flex; width: fit-content">
+                <button class="show-items-btn" style="outline: none; border: 1px solid #75b061 !important; padding: 5px 10px; background-color: #fff; color: #75b061; border: none; border-radius: 5px; cursor: pointer; ">Создать новость</button>
+            </div>
+        </div>
+    </div>
+    <div>
+        <p> {{single_news.text|linebreaksbr}} </p>
+    </div>
+</div>
+
+
+{% endblock %}

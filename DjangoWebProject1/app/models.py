@@ -51,6 +51,34 @@ class Review(models.Model):
     grade = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
     created_at = models.DateTimeField(auto_now_add=True)
 
+class News(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    short_info = models.TextField()
+    text = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+    
+class NewsComments(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    news = models.ForeignKey(News, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Комментарий от на статью {self.news.title}'
+
+class NewsImages(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    news = models.ForeignKey(News, on_delete=models.CASCADE)
+    path = models.FileField()
+
+    def __str__(self):
+        return f'Картинка для новости {self.news.title}'
 
 admin.site.register(Category)
 admin.site.register(Product)
@@ -59,3 +87,6 @@ admin.site.register(Order)
 admin.site.register(OrderProduct)
 admin.site.register(UserProfile)
 admin.site.register(Review)
+admin.site.register(News)
+admin.site.register(NewsComments)
+admin.site.register(NewsImages)

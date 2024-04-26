@@ -61,9 +61,12 @@
     <Content Include="app\static\app\content\poster.jpg" />
     <Content Include="app\static\app\content\anketa.css" />
     <Content Include="app\templates\app\404.html" />
+    <Content Include="app\templates\app\addnews.html" />
     <Content Include="app\templates\app\cabinet.html" />
     <Content Include="app\templates\app\cart.html" />
     <Content Include="app\templates\app\dynamic.html" />
+    <Content Include="app\templates\app\news.html" />
+    <Content Include="app\templates\app\newsdetails.html" />
     <Content Include="app\templates\app\partners.html" />
     <Content Include="app\templates\app\anketa.html" />
     <Content Include="app\templates\app\products.html" />

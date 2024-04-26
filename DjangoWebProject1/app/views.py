@@ -6,8 +6,8 @@ from asyncio.windows_events import NULL
 from datetime import datetime
 from django.shortcuts import render, redirect, Http404
 from django.http import HttpRequest, JsonResponse
-from app.models import Category, Product, Order, OrderProduct, UserProfile, Review, Image
-from .forms import AnketaForm, BootstrapPasswordChangeForm, BootstrapUserCreationForm, UserProfileForm, ReviewForm
+from app.models import Category, Product, Order, OrderProduct, UserProfile, Review, Image, News, NewsImages
+from .forms import AnketaForm, BootstrapPasswordChangeForm, BootstrapUserCreationForm, UserProfileForm, ReviewForm, NewsForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from collections import defaultdict
@@ -866,6 +866,62 @@ def delete_review(request, review_id):
             return JsonResponse({'error': 'Отзыв не существует или не принадлежит текущему пользователю.'}, status=404)
     else:
         return JsonResponse({'error': 'Пользователь не аутентифицирован.'}, status=401)
+    
+
+def news(request):
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
+
+    news = News.objects.all()
+    for snews in news:
+        images = NewsImages.objects.filter(news=snews)
+        snews.images = images
+        
+    context = {
+        "title": "Новости",
+        "avatar": avatar,
+        "news": news
+    }
+    return render(request, 'app/news.html', context)
+
+def newsdetails(request):
+    avatar = NULL
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
+    context = {
+        "title": "Конкретно",
+        "avatar": avatar
+    }
+    return render(request, 'app/newsdetails.html', context)
+
+@login_required
+def addnews(request):
+    avatar = None
+    if request.user.is_authenticated:
+        avatar = UserProfile.objects.filter(user=request.user).first()
+    
+    if request.method == 'POST':
+        form = NewsForm(request.POST, request.FILES)
+        if form.is_valid():
+            news_instance = form.save(commit=False)
+            news_instance.user = request.user
+            news_instance.save()
+
+            for file in request.FILES.getlist('images'):
+                news_image = NewsImages(news=news_instance, path=file)
+                news_image.save()
+            
+            return redirect('news')
+    else:
+        form = NewsForm()
+    
+    context = {
+        "title": "Создание новости",
+        "avatar": avatar,
+        "form": form 
+    }
+    return render(request, 'app/addnews.html', context)
 
 
 def error_404(request, exception):

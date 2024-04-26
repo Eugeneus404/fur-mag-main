@@ -40,6 +40,9 @@ urlpatterns = [
     path('products/<int:item>/', views.products, name='products'),
     path('cart/', views.cart, name='cart'),
     path('cabinet/', views.cabinet, name='cabinet'),
+    path('news/', views.news, name='news'),
+    path('news/<int:item>/', views.newsdetails, name='newsdetails'),
+    path('addnews/', views.addnews, name='addnews'),
     
     path('create_order/', views.create_order, name='create_order'),
     path('delete_order/<int:order_id>/', views.delete_order, name='delete_order'),

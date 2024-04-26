@@ -6,7 +6,23 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm
 from django.utils.translation import gettext_lazy as _
 from django.core.files.images import get_image_dimensions
-from .models import UserProfile, Review
+from .models import UserProfile, Review, News, NewsImages
+
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            result = [single_file_clean(data, initial)]
+        return result   
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
@@ -36,41 +52,41 @@ class BootstrapAuthenticationForm(AuthenticationForm):
     """Authentication form which uses boostrap CSS."""
     username = forms.CharField(max_length=254,
                                widget=forms.TextInput({
-                                   'class': 'form-control custom-input',
+                                   'class': ' custom-input',
                                    'placeholder': 'Имя пользователя'}))
     password = forms.CharField(label=_("Password"),
                                widget=forms.PasswordInput({
-                                   'class': 'form-control custom-input',
+                                   'class': 'custom-input',
                                    'placeholder':'Пароль'}))
     
 class BootstrapUserCreationForm(UserCreationForm):
     """User creation form which uses bootstrap CSS."""
     username = forms.CharField(max_length=254,
                                widget=forms.TextInput({
-                                   'class': 'form-control custom-input',
+                                   'class': 'custom-input',
                                    'placeholder': 'Имя пользователя'}))
     password1 = forms.CharField(label=_("Password"),
                                 widget=forms.PasswordInput({
-                                    'class': 'form-control custom-input',
+                                    'class': 'custom-input',
                                     'placeholder': 'Пароль'}))
     password2 = forms.CharField(label=_("Password confirmation"),
                                 widget=forms.PasswordInput({
-                                    'class': 'form-control custom-input',
+                                    'class': 'custom-input',
                                     'placeholder': 'Подтверждение пароля'}))
 
 class BootstrapPasswordChangeForm(PasswordChangeForm):
     """Password change form which uses bootstrap CSS."""
     old_password = forms.CharField(label=_("Old password"),
                                    widget=forms.PasswordInput({
-                                       'class': 'form-control custom-input',
+                                       'class': 'custom-input',
                                        'placeholder': 'Старый пароль'}))
     new_password1 = forms.CharField(label=_("New password"),
                                     widget=forms.PasswordInput({
-                                        'class': 'form-control custom-input',
+                                        'class': 'custom-input',
                                         'placeholder': 'Новый пароль'}))
     new_password2 = forms.CharField(label=_("New password confirmation"),
                                     widget=forms.PasswordInput({
-                                        'class': 'form-control custom-input',
+                                        'class': 'custom-input',
                                         'placeholder': 'Подтверждение нового пароля'}))
     
 class AnketaForm(forms.Form):
@@ -92,6 +108,24 @@ class AnketaForm(forms.Form):
     notice = forms.BooleanField(label='Получать новости сайта', required=False)
     message = forms.CharField(label='Короткое резюме', widget=forms.Textarea)
     
+class NewsForm(forms.ModelForm):
+    images = MultipleFileField(label='Изображения')
+
+    class Meta:
+        model = News
+        fields = ['title', 'short_info', 'text', 'images']
+        labels = {
+            'title': 'Заголовок',
+            'short_info': 'Краткая информация',
+            'text': 'Текст новости',
+            'images': 'Изображения',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(NewsForm, self).__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs.update({'class': 'custom-input'})
+        self.fields['short_info'].widget.attrs.update({'style': 'height: 50px;', 'maxlength': '100'}) 
+        self.fields['text'].widget.attrs.update({'style': 'height: 300px;', 'maxlength': '100'})
 
 class ReviewForm(forms.ModelForm):
     class Meta:

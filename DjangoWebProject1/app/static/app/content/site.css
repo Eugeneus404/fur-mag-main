@@ -2,21 +2,35 @@
 
 label {
     color: #6E6E6E;
-    font-size: 18px;    
+    font-size: 18px;
 }
+
 textarea {
-    width: 100%;
+    width: 100% !important;
     height: 100px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    resize: none;
-    font-size: 16px;
+    padding: 8px !important;
+    border: 1px solid #ccc !important;
+    border-radius: 5px !important;
+    resize: none !important;
+    font-size: 16px !important;
 }
 
     textarea:focus {
-        border-color: #75b061;
-        outline: none;
+        border-color: #75b061 !important;
+        outline: none !important;
+    }
+
+.custom-input {
+    width: 100% !important;
+    padding: 8px !important;
+    border: 1px solid #ccc !important;
+    font-size: 16px !important;
+    border-radius: 5px;
+}
+
+    .custom-input:focus {
+        border-color: #75b061 !important;
+        outline: none !important;
     }
 
 select {
@@ -32,6 +46,7 @@ select {
     font-size: 16px !important;
     color: #333;
 }
+
     select:hover {
         border-color: #aaa;
     }
@@ -320,15 +335,18 @@ body {
     white-space: nowrap;
     margin-bottom: 10px;
 }
-.subcategory-name:hover {
-    color: #75b061;
-}
+
+    .subcategory-name:hover {
+        color: #75b061;
+    }
+
 .green-hover {
     color: #6e6e6e;
 }
-.green-hover:hover {
-    color: #75b061;
-}
+
+    .green-hover:hover {
+        color: #75b061;
+    }
 
 
 .sub-subcategories {
@@ -429,6 +447,12 @@ body {
     grid-gap: 20px;
 }
 
+.product-container1 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    grid-gap: 20px;
+}
+
 .product-card {
     background-color: #f9f9f9;
     border-radius: 8px;
@@ -514,9 +538,11 @@ body {
         outline: none;
         border-color: #75b061;
     }
+
 .product-card-availability {
     margin-top: 10px;
 }
+
 .add-to-cart-button {
     background-color: #75b061;
     color: white;
