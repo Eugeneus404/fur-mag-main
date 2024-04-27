@@ -2,7 +2,6 @@
 Definition of views.
 """
 
-from asyncio.windows_events import NULL
 from datetime import datetime
 from django.shortcuts import render, redirect, Http404
 from django.http import HttpRequest, JsonResponse, HttpResponseRedirect
@@ -58,7 +57,7 @@ def home(request):
         product.totalReviews = total_reviews
         product.images = images
     
-    avatar = NULL
+    avatar = None
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
 
@@ -111,7 +110,7 @@ def catalog(request):
         product.totalReviews = total_reviews
         product.images = images
     
-    avatar = NULL
+    avatar = None
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
 
@@ -131,7 +130,7 @@ def contact(request):
     """Renders the contact page."""
     assert isinstance(request, HttpRequest)
     
-    avatar = NULL
+    avatar = None
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
 
@@ -150,7 +149,7 @@ def about(request):
     """Renders the about page."""
     assert isinstance(request, HttpRequest)
     
-    avatar = NULL
+    avatar = None
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
 
@@ -169,7 +168,7 @@ def partners(request):
     """Renders the about page."""
     assert isinstance(request, HttpRequest)
     
-    avatar = NULL
+    avatar = None
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
 
@@ -230,7 +229,7 @@ def registration(request):
         regform = BootstrapUserCreationForm()
     assert isinstance(request, HttpRequest)
     
-    avatar = NULL
+    avatar = None
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
 
@@ -294,8 +293,8 @@ def dynamic3(request, item1, item2, item3):
     
     title = "Ошибка 404"
     
-    products = NULL
-    paginator = NULL
+    products = None
+    paginator = None
     # Страница и сортировка
     
     page_number = request.GET.get('page')
@@ -370,7 +369,7 @@ def dynamic3(request, item1, item2, item3):
                 })
                 title = category3.name
                 category_data = find_category_in_tree(category3.id, category_tree)
-    avatar = NULL
+    avatar = None
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
     context = {
@@ -435,8 +434,8 @@ def dynamic2(request, item1, item2):
         'name': "Страница не найдена",
     }
 
-    products = NULL
-    paginator = NULL
+    products = None
+    paginator = None
     # Страница и сортировка
     
     page_number = request.GET.get('page')
@@ -506,7 +505,7 @@ def dynamic2(request, item1, item2):
             })
             title = category2.name
             category_data = find_category_in_tree(category2.id, category_tree)
-    avatar = NULL
+    avatar = None
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
     context = {
@@ -571,8 +570,8 @@ def dynamic1(request, item1):
     
     title = "Ошибка 404"
     
-    products = NULL
-    paginator = NULL
+    products = None
+    paginator = None
     
     # Страница и сортировка
     
@@ -638,7 +637,7 @@ def dynamic1(request, item1):
         title = category.name
         category_data = find_category_in_tree(category.id, category_tree)
    
-    avatar = NULL
+    avatar = None
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
     
@@ -765,7 +764,7 @@ def products(request, item):
     return render(request, 'app/products.html', context)
 
 def cart(request):
-    avatar = NULL
+    avatar = None
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
     context = {
@@ -807,7 +806,7 @@ def cabinet(request):
         order.items = OrderProduct.objects.filter(order=order)
         order.total_cost = sum(item.price * item.count for item in order.items)
         
-    avatar = NULL
+    avatar = None
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
         
@@ -882,7 +881,7 @@ def delete_review(request, review_id):
     
 
 def news(request):
-    avatar = NULL
+    avatar = None
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
 
@@ -900,7 +899,7 @@ def news(request):
 
 def newsdetails(request, item):
    
-    avatar = NULL
+    avatar = None
     
     news_data = {
         "title": "Страница не найдена",
