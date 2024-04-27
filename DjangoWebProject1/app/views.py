@@ -5,9 +5,9 @@ Definition of views.
 from asyncio.windows_events import NULL
 from datetime import datetime
 from django.shortcuts import render, redirect, Http404
-from django.http import HttpRequest, JsonResponse
-from app.models import Category, Product, Order, OrderProduct, UserProfile, Review, Image, News, NewsImages
-from .forms import AnketaForm, BootstrapPasswordChangeForm, BootstrapUserCreationForm, UserProfileForm, ReviewForm, NewsForm
+from django.http import HttpRequest, JsonResponse, HttpResponseRedirect
+from app.models import Category, NewsComments, Product, Order, OrderProduct, UserProfile, Review, Image, News, NewsImages
+from .forms import AnketaForm, BootstrapPasswordChangeForm, BootstrapUserCreationForm, NewsCommentForm, UserProfileForm, ReviewForm, NewsForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from collections import defaultdict
@@ -19,6 +19,7 @@ from decimal import Decimal
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from django.urls import reverse
 
 def home(request):
     """Renders the home page."""
@@ -856,6 +857,18 @@ def delete_order(request, order_id):
         return JsonResponse({'error': 'Пользователь не аутентифицирован.'}, status=401)
     
 @require_POST
+def delete_comment(request, comment_id):
+    if request.user.is_authenticated:
+        try:
+            comment = NewsComments.objects.get(pk=comment_id, user=request.user)
+            comment.delete()
+            return JsonResponse({'message': 'Комментарий успешно удален.'}, status=200)
+        except Order.DoesNotExist:
+            return JsonResponse({'error': 'Указанный комментарий не существует или не принадлежит текущему пользователю.'}, status=404)
+    else:
+        return JsonResponse({'error': 'Пользователь не аутентифицирован.'}, status=401)
+    
+@require_POST
 def delete_review(request, review_id):
     if request.user.is_authenticated:
         try:
@@ -885,14 +898,58 @@ def news(request):
     }
     return render(request, 'app/news.html', context)
 
-def newsdetails(request):
+def newsdetails(request, item):
+   
     avatar = NULL
+    
+    news_data = {
+        "title": "Страница не найдена",
+        "news":{"name": "Страница не найдена"},
+        "id": 0
+    }
+
     if request.user.is_authenticated:
         avatar = UserProfile.objects.filter(user=request.user).first()
-    context = {
-        "title": "Конкретно",
-        "avatar": avatar
-    }
+        news_data = {
+            "title": "Страница не найдена",
+            "id": 0,
+            "avatar": avatar
+        }
+    
+    news = News.objects.filter(id=item).first()
+    
+    if news:
+        images = NewsImages.objects.filter(news=news)
+        comments = NewsComments.objects.filter(news=news)
+        all_news = News.objects.exclude(id=news.id)[:4]
+        for snews in all_news:
+            images1 = NewsImages.objects.filter(news=snews)
+            snews.images = images1
+        news.images = images
+        comment_form = NewsCommentForm()
+        news_data = {
+            "title": news.title,
+            "id": news.id,
+            "news": news,
+            "all_news": all_news,
+            "comments": comments,
+            "comment_form": comment_form
+        }
+
+
+    context = news_data
+    
+    if request.method == 'POST':
+        comment_form = NewsCommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.news = news
+            comment.user = request.user
+            comment.save()
+            url = reverse('newsdetails', kwargs={'item': item}) + '#comments'
+            return HttpResponseRedirect(url)
+        else:
+            comment_form = NewsCommentForm()
     return render(request, 'app/newsdetails.html', context)
 
 @login_required

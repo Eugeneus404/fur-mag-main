@@ -7,11 +7,13 @@
         <div>
             Новости сайта
         </div>
+        {% if user and user.is_staff %}
         <div style="width: 160px;">
             <div style="display: flex; width: fit-content">
                 <button class="show-items-btn" style="outline: none; border: 1px solid #75b061 !important; padding: 5px 10px; background-color: #fff; color: #75b061; border: none; border-radius: 5px; cursor: pointer; "><a style="color: #75b061; text-decoration: none;" href="{% url 'addnews' %}">Создать новость</a></button>
             </div>
         </div>
+        {% endif %}
     </div>
     <div>
         {% if news %}

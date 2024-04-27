@@ -6,7 +6,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm
 from django.utils.translation import gettext_lazy as _
 from django.core.files.images import get_image_dimensions
-from .models import UserProfile, Review, News, NewsImages
+from .models import NewsComments, UserProfile, Review, News, NewsImages
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
@@ -125,7 +125,7 @@ class NewsForm(forms.ModelForm):
         super(NewsForm, self).__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'custom-input'})
         self.fields['short_info'].widget.attrs.update({'style': 'height: 50px;', 'maxlength': '100'}) 
-        self.fields['text'].widget.attrs.update({'style': 'height: 300px;', 'maxlength': '100'})
+        self.fields['text'].widget.attrs.update({'style': 'height: 300px;'})
 
 class ReviewForm(forms.ModelForm):
     class Meta:
@@ -138,3 +138,15 @@ class ReviewForm(forms.ModelForm):
         widgets = {
             'text': forms.Textarea(attrs={'rows': 4}),
         }
+
+class NewsCommentForm(forms.ModelForm):
+    class Meta:
+        model = NewsComments
+        fields = ['comment']
+        labels = {
+            'comment': 'Оставьте комментарий',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(NewsCommentForm, self).__init__(*args, **kwargs)
+        self.fields['comment'].widget = forms.Textarea(attrs={'rows': 4, 'cols': 40})
