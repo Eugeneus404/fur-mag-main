@@ -6,16 +6,16 @@
     <div class="categories-container">
         <div class="main_cat_cont">
             {% for category in categories %}
-            <a style="text-decoration: none" href="{{ "/catalog/" | add:category.path }}">
+            <a style="text-decoration: none" href="{{ "/catalog/" | add:category.path }}/">
                 <div class="category" onmouseover="showChildren(this)" onmouseleave="hideChildren(this)">
                     <div class="category-name">{{ category.name | upper }}</div>
                     <div class="subcategories">
                         {% for child in category.children %}
                         <div class="subcategory">
-                            <a style="text-decoration: none" href="{{ "/catalog/" | add:child.path }}"><div class="subcategory-name">{{ child.name }}</div></a>
+                            <a style="text-decoration: none" href="{{ "/catalog/" | add:child.path }}/"><div class="subcategory-name">{{ child.name }}</div></a>
                             <div class="sub-subcategories">
                                 {% for grandchild in child.children %}
-                                <a style="text-decoration: none; color: #6e6e6e;" href="{{ "/catalog/" | add:grandchild.path }}">
+                                <a style="text-decoration: none; color: #6e6e6e;" href="{{ "/catalog/" | add:grandchild.path }}/">
                                     <div class="sub-subcategory">{{ "• " | add:grandchild.name }}</div>
                                 </a>
                                 {% endfor %}
@@ -49,7 +49,7 @@
         {% for product in products %}
         <div class="product-card">
             <div class="product-details">
-                <a style="text-decoration: none;" href="/products/{{ product.id }}">
+                <a style="text-decoration: none;" href="/products/{{ product.id }}/">
                     <div class="product-image" style="min-height: 200px; height: 200px; overflow: hidden;">
                         {% if product.images %}
                         {% if product.images|length > 1 %}

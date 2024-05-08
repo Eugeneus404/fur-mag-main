@@ -967,8 +967,11 @@ def addnews(request):
             for file in request.FILES.getlist('images'):
                 news_image = NewsImages(news=news_instance, path=file)
                 news_image.save()
+                
+            news_id = news_instance.pk
             
-            return redirect('news')
+            redirect_url = f'/news/{news_id}/'
+            return redirect(redirect_url)
     else:
         form = NewsForm()
     

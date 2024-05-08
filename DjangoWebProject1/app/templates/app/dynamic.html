@@ -8,7 +8,7 @@
         {{ category.name }}
         {% else %}
         <div style="display: flex; gap: 10px; margin-bottom: 20px">
-            <a style="text-decoration: none; color: #75b061" href="/catalog">
+            <a style="text-decoration: none; color: #75b061" href="/catalog/">
                 Каталог •
             </a>
             {% for ch in catalog_history %}
@@ -37,7 +37,7 @@
     {% if category.children|length > 0 %}
     <div style="display: flex; gap: 20px; margin-bottom: 25px;">
         {% for child in category.children %}
-        <a style="text-decoration: none" href="{{ "/catalog/" | add:child.path }}">
+        <a style="text-decoration: none" href="{{ "/catalog/" | add:child.path }}/">
             <div style="padding: 10px 20px; font-size: 18px; border: 1px solid #75b061; border-radius: 10px; color: #75b061 ">
                 {{ child.name }}
             </div>
@@ -66,7 +66,7 @@
         {% for product in products %}
         <div class="product-card">
             <div class="product-details">
-                <a style="text-decoration: none;" href="/products/{{ product.id }}">
+                <a style="text-decoration: none;" href="/products/{{ product.id }}/">
                     <div class="product-image" style="min-height: 200px; height: 200px; overflow: hidden;">
                         {% if product.images %}
                         {% if product.images|length > 1 %}

@@ -9,16 +9,16 @@
     <div>
         <div style="display: flex; flex-direction: column;">
             {% for category in categories %}
-            <a style="text-decoration: none; color: #75b061;" href="{{ "/catalog/" | add:category.path }}">
+            <a style="text-decoration: none; color: #75b061;" href="{{ "/catalog/" | add:category.path }}/">
                 <div style="padding: 10px; margin-bottom: 5px;">
                     <div style="font-weight: bold; text-transform: uppercase; font-size: 18px;">{{ category.name }}</div>
                     <div style="margin-top: 5px; display: flex; gap: 20px">
                         {% for child in category.children %}
                         <div style="font-size: 16px; display: flex; flex-direction: column;">
-                            <a class="green-hover" style="text-decoration: none; font-weight: 600;" href="{{ "/catalog/" | add:child.path }}">{{ child.name }}</a>
+                            <a class="green-hover" style="text-decoration: none; font-weight: 600;" href="{{ "/catalog/" | add:child.path }}/">{{ child.name }}</a>
                             <div style="display: flex; flex-direction: column; margin-top: 10px;">
                                 {% for grandchild in child.children %}
-                                <a style="text-decoration: none; color: #6e6e6e;" href="{{ "/catalog/" | add:grandchild.path }}">
+                                <a style="text-decoration: none; color: #6e6e6e;" href="{{ "/catalog/" | add:grandchild.path }}/">
                                     <div class="sub-subcategory">{{ "• " | add:grandchild.name }}</div>
                                 </a>
                                 {% endfor %}
@@ -41,7 +41,7 @@
         {% for product in products %}
         <div class="product-card">
             <div class="product-details">
-                <a style="text-decoration: none;" href="/products/{{ product.id }}">
+                <a style="text-decoration: none;" href="/products/{{ product.id }}/">
                     <div class="product-image" style="min-height: 200px; height: 200px; overflow: hidden;">
                         {% if product.images %}
                         {% if product.images|length > 1 %}
