@@ -668,6 +668,8 @@ def products(request, item):
     reviews = None
     avatar = None
     userReview = None
+    catalog_history = []
+    reviews_with_user_info = []
     
     if product: 
         images = Image.objects.filter(product=product)
